@@ -1,0 +1,11 @@
+[package]
+name = "qwk_rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+base64 = "0.22.1"
+bstr = "1.12.1"
+readonly = "0.2.13"
+serde = "1.0.228"
+zip = "6.0.0"

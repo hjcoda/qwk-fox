@@ -1,0 +1,1 @@
+rm ~/.local/share/com.qwk-fox.app/qwk_reader.db 

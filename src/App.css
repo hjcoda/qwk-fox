@@ -1,0 +1,17 @@
+.expand-contents {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.padded {
+  margin: 8px;
+}
+
+.v-divider {
+  height: 5px !important;
+}
+
+.h-divider {
+  width: 5px !important;
+}

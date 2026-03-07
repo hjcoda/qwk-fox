@@ -1,0 +1,56 @@
+import { ScrollTable } from "../ui";
+import { TableRowData } from "../ui/ScrollTable.types";
+import { Message } from "../data/DTO";
+
+export const MessageList = ({
+  messages,
+  conference_id,
+  onSelectedMessageChanged,
+}: {
+  messages: Message[] | null;
+  conference_id: number | null;
+  onSelectedMessageChanged: (message_id: number) => void;
+}): React.ReactElement => {
+  const data =
+    conference_id && messages
+      ? messages.map((m) => {
+          return {
+            index: m.msg_id,
+            disabled: false,
+            data: {
+              id: m.msg_id,
+              subject: m.subject,
+              date: m.date,
+              from: m.from,
+              to: m.to,
+              type: m.type_id,
+            },
+          };
+        })
+      : [];
+
+  return (
+    <ScrollTable
+      headers={[
+        { title: "Id", accessorKey: "id", width: 10 },
+        { title: "From", accessorKey: "from", width: 20 },
+        { title: "To", accessorKey: "to", width: 20 },
+        { title: "Subject", accessorKey: "subject", width: 30 },
+        { title: "Date", accessorKey: "date", width: 20 },
+      ]}
+      data={data}
+      onSelectedIndexChange={(index) => {
+        onSelectedMessageChanged(index);
+      }}
+      rowItemRenderer={(data: TableRowData, accessorKey: string) => {
+        if (data["type"] === " ") {
+          return (
+            <div style={{ fontWeight: "bold" }}>{`${data[accessorKey]}`}</div>
+          );
+        }
+
+        return data[accessorKey];
+      }}
+    />
+  );
+};

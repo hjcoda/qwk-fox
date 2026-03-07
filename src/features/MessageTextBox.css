@@ -1,0 +1,25 @@
+.message-box-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.message-box_text {
+  background: black;
+  color: white;
+  font-family: monospace;
+}
+
+.message-content-scroll {
+  flex: 1 1 auto; /* Take remaining space */
+  overflow-y: auto; /* Enable vertical scrolling */
+  min-height: 0; /* Critical for Firefox/older browsers */
+}
+
+.message-text {
+  font-family: monospace;
+  padding: 1rem;
+  white-space: pre-wrap;
+}

@@ -1,0 +1,60 @@
+.table-no-hover {
+  tbody tr:hover {
+    background-color: white;
+    color: inherit;
+    cursor: default;
+  }
+}
+
+.scrolltable-container {
+  user-select: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tbody-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tbody-scroll table {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tbody-scroll tbody {
+  display: table;
+  cursor: pointer;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  word-wrap: break-word;
+}
+
+.disabled {
+  color: grey;
+}
+
+.table-row--highlighted {
+  background-color: #060084 !important;
+  color: white !important;
+  border: dotted 2px white !important;
+}
+
+.table-row--highlighted--unfocussed {
+  background-color: white !important;
+  border: solid 2px #060084 !important;
+}
+
+.table-row {
+  white-space: nowrap;
+}

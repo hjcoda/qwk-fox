@@ -1,0 +1,14 @@
+.message-detail-slug {
+  flex-shrink: 0; /* Prevent header from shrinking */
+  display: grid;
+  grid-template-rows: 1;
+  grid-template-columns: auto auto;
+  max-height: 5em;
+}
+
+.message-detail-slug-item {
+  display: grid;
+  gap: 0px 10px;
+  grid-template-rows: 3;
+  grid-template-columns: 3em auto;
+}

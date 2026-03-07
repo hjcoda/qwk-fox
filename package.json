@@ -1,0 +1,52 @@
+{
+  "name": "qwk-fox",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@tanstack/react-virtual": "^3.13.19",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-sql": "^2",
+    "@tauri-apps/plugin-store": "~2",
+    "@tauri-apps/plugin-stronghold": "^2.3.1",
+    "@types/react": "^19.2.14",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-seq": "^0.9.1",
+    "react-split-pane": "^3.2.0",
+    "react-tooltip": "^5.30.0",
+    "react95": "^4.0.0",
+    "styled-components": "^6.3.11"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^5.0.1",
+    "@storybook/addon-a11y": "^10.2.14",
+    "@storybook/addon-docs": "^10.2.14",
+    "@storybook/addon-vitest": "^10.2.14",
+    "@storybook/react-vite": "^10.2.14",
+    "@tauri-apps/cli": "^2",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "playwright": "^1.58.2",
+    "storybook": "^10.2.14",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.3",
+    "vite-plugin-babel": "^1.5.1",
+    "vitest": "^4.0.18"
+  }
+}
