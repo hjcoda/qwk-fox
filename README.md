@@ -8,7 +8,7 @@ A simple offline reader for QWK packets.
 
 # Running on Wayland
 
-WEBKIT_DISABLE_DMABUF_RENDERER=1 yarn tauri dev
+WEBKIT_DISABLE_DMABUF_RENDERER=1 npm run tauri dev
 
 # Windows
 
