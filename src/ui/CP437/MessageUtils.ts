@@ -1,9 +1,6 @@
 const SynchronetKludges = ["@VIA", "@MSGID", "@REPLY", "@TZ"] as const;
 type SynchronetKludge = (typeof SynchronetKludges)[number];
 
-const ReplyAttributions = ["Re:", "By:"] as const;
-type ReplyAttribution = (typeof ReplyAttributions)[number];
-
 export type MessageExtensions = {
   firstLineOfMessageText: number;
   subject?: string;
@@ -23,22 +20,6 @@ const processKludge = (
     if (line.startsWith(key)) {
       const value = line.slice(key.length);
       return { key: key as SynchronetKludge, value };
-    }
-  }
-
-  return null;
-};
-
-const processReplyAttribution = (
-  line: string,
-): { key: ReplyAttribution; value: string } | null => {
-  for (const keyIndex in ReplyAttributions) {
-    const key = ReplyAttributions[keyIndex];
-    console.log(`Looking for ${key} in ${line}`);
-
-    if (line.trim().startsWith(key)) {
-      const value = line.trim().slice(key.length);
-      return { key: key as ReplyAttribution, value };
     }
   }
 
@@ -68,21 +49,6 @@ export const extractMessageExtensions = (
       messageExtensions.firstLineOfMessageText++;
     }
   }
-
-  //   while (
-  //     processReplyAttribution(lines[messageExtensions.firstLineOfMessageText]) !==
-  //     null
-  //   ) {
-  //     const attribution = processReplyAttribution(
-  //       lines[messageExtensions.firstLineOfMessageText],
-  //     );
-  //     if (attribution) {
-  //       console.log("Found attribution");
-  //       const { key, value } = attribution;
-  //       messageExtensions[key] = value;
-  //       messageExtensions.firstLineOfMessageText++;
-  //     }
-  //   }
 
   return messageExtensions;
 };

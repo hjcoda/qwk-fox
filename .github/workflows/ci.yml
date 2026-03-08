@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+    branches:
+      - "*"
+  workflow_dispatch:
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Node.js setup
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: "Install dependencies (Linux)"
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt update && sudo apt-get install -y libwayland-dev pkg-config
+
+      - run: npm ci
+      - run: npm run build

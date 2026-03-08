@@ -1,5 +1,6 @@
 /target
 /qwk
+/bin
 # Logs
 logs
 *.log
