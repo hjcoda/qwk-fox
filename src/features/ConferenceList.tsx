@@ -1,5 +1,5 @@
-import { ScrollTable } from "../ui";
 import { Conference } from "../data/DTO";
+import { ScrollTable } from "../ui";
 
 export const ConferenceList = ({
   bbsId,

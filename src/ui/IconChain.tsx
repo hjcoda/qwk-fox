@@ -1,6 +1,6 @@
 import { Tooltip } from "react-tooltip";
-import "./IconChain.css";
 import { Frame } from "react95";
+import "./IconChain.css";
 
 export type IconItem = {
   index: string;

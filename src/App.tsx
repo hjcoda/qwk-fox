@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { open, message } from "@tauri-apps/plugin-dialog";
-import { exit } from "@tauri-apps/plugin-process";
 import { Menu, Submenu } from "@tauri-apps/api/menu";
+import { message, open } from "@tauri-apps/plugin-dialog";
+import { exit } from "@tauri-apps/plugin-process";
+import { useEffect, useState } from "react";
 
 import "./App.css";
 
 import { Server } from "./data/DTO";
 
-import { useTauriEvent } from "./hooks/useTauriEvent";
-import { MainPage } from "./pages/MainPage";
-import { BBSWizard } from "./pages/BBSWizard";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { useTauriEvent } from "./hooks/useTauriEvent";
+import { BBSWizard } from "./pages/BBSWizard";
+import { MainPage } from "./pages/MainPage";
 
-import { styleReset } from "react95";
+import { styleReset, WindowContent } from "react95";
 // pick a theme of your choice
 import original from "react95/dist/themes/original";
 // original Windows95 font (optionally)
@@ -173,16 +173,10 @@ function App() {
   }
 
   return (
-    <main
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <main>
       <GlobalStyles />
       <ThemeProvider theme={original}>
-        <div>
+        <div className="window-content">
           {servers.length === 0 ? (
             <BBSWizard />
           ) : (

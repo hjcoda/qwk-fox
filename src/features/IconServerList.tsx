@@ -1,6 +1,6 @@
-import { IconChain } from "../ui/IconChain";
-import { Server } from "../data/DTO";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { Server } from "../data/DTO";
+import { IconChain } from "../ui/IconChain";
 
 export const IconServerList = ({
   servers,

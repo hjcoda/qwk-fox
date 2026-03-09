@@ -1,10 +1,10 @@
 import React from "react";
-import "./MessageTextBox.css";
 import { ScrollView } from "react95";
-import { MessageDetailSlug } from "./MessageDetailSlug";
 import { Message } from "../data/DTO";
-import { extractMessageExtensions } from "../ui/CP437/MessageUtils";
 import { CP437_TO_UNICODE } from "../ui/CP437/Mapping";
+import { extractMessageExtensions } from "../ui/CP437/MessageUtils";
+import { MessageDetailSlug } from "./MessageDetailSlug";
+import "./MessageTextBox.css";
 
 const stripAnsi = (text: string): string => {
   return text.replace(/\x1b\[[0-9;]*m/g, "");

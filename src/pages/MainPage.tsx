@@ -1,14 +1,14 @@
-import { SplitPane, Pane } from "react-split-pane";
-import { GroupBox, Frame } from "react95";
+import { invoke } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
+import { Pane, SplitPane } from "react-split-pane";
+import { Frame, GroupBox } from "react95";
+import { AppSettings } from "../AppSettings";
+import { Conference, Message, MessageStatus, Server } from "../data/DTO";
 import { ConferenceList } from "../features/ConferenceList";
 import { IconServerList } from "../features/IconServerList";
 import { MessageList } from "../features/MessageList";
 import { MessageTextBox } from "../features/MessageTextBox";
-import { useEffect, useState } from "react";
-import { Conference, Message, MessageStatus, Server } from "../data/DTO";
-import { invoke } from "@tauri-apps/api/core";
 import { useTauriEvent } from "../hooks/useTauriEvent";
-import { AppSettings } from "../AppSettings";
 
 type UpdateMessagesPayload = {
   bbs_id: string;
@@ -110,13 +110,7 @@ export const MainPage = ({
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className="main-page">
       <GroupBox className={"padded"} label={"Servers"}>
         <IconServerList
           servers={servers}

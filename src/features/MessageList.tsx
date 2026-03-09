@@ -1,6 +1,6 @@
+import { Message } from "../data/DTO";
 import { ScrollTable } from "../ui";
 import { TableRowData } from "../ui/ScrollTable.types";
-import { Message } from "../data/DTO";
 
 export const MessageList = ({
   messages,
