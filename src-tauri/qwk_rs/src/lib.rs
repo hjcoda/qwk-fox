@@ -12,34 +12,49 @@ use zip::ZipArchive;
 // Define possible message states
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
 pub enum MessageStatus {
-    Unread,    // ' '
-    Read,      // 'R'
-    Replied,   // 'P' (replied)
-    Forwarded, // 'F'
-    Flagged,   // 'G' (flagged/important)
-    Deleted,   // 'D'
+    PublicUnread,
+    PublicRead,
+    PrivateUnread,
+    PrivateRead,
+    CommentToSysopUnread,
+    CommentToSysopRead,
+    PasswordProtectedUnread,
+    PasswordProtectedRead,
+    GroupPasswordUnread,
+    GroupPasswordRead,
+    GroupPasswordToAll,
 }
 
 impl MessageStatus {
     pub fn to_char(&self) -> char {
         match self {
-            MessageStatus::Unread => ' ',
-            MessageStatus::Read => 'R',
-            MessageStatus::Replied => 'P',
-            MessageStatus::Forwarded => 'F',
-            MessageStatus::Flagged => 'G',
-            MessageStatus::Deleted => 'D',
+            MessageStatus::PublicUnread => ' ',
+            MessageStatus::PublicRead => '-',
+            MessageStatus::PrivateUnread => '+',
+            MessageStatus::PrivateRead => '*',
+            MessageStatus::CommentToSysopUnread => '~',
+            MessageStatus::CommentToSysopRead => '`',
+            MessageStatus::PasswordProtectedUnread => '%',
+            MessageStatus::PasswordProtectedRead => '^',
+            MessageStatus::GroupPasswordUnread => '!',
+            MessageStatus::GroupPasswordRead => '#',
+            MessageStatus::GroupPasswordToAll => '$',
         }
     }
 
     pub fn from_char(c: char) -> Option<Self> {
         match c {
-            ' ' => Some(MessageStatus::Unread),
-            'R' => Some(MessageStatus::Read),
-            'P' => Some(MessageStatus::Replied),
-            'F' => Some(MessageStatus::Forwarded),
-            'G' => Some(MessageStatus::Flagged),
-            'D' => Some(MessageStatus::Deleted),
+            ' ' => Some(MessageStatus::PublicUnread),
+            '-' => Some(MessageStatus::PublicRead),
+            '+' => Some(MessageStatus::PrivateUnread),
+            '*' => Some(MessageStatus::PrivateRead),
+            '~' => Some(MessageStatus::CommentToSysopUnread),
+            '`' => Some(MessageStatus::CommentToSysopRead),
+            '%' => Some(MessageStatus::PasswordProtectedUnread),
+            '^' => Some(MessageStatus::PasswordProtectedRead),
+            '!' => Some(MessageStatus::GroupPasswordUnread),
+            '#' => Some(MessageStatus::GroupPasswordRead),
+            '$' => Some(MessageStatus::GroupPasswordToAll),
             _ => None,
         }
     }

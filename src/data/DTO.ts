@@ -17,7 +17,7 @@ export type Conference = {
 };
 
 export interface Message {
-  type_id: MessageStatus;
+  type_id: MessageStatusEnum;
   msg_id: number;
   subject: string;
   text: string;
@@ -29,4 +29,28 @@ export interface Message {
   conference_id: number;
 }
 
-export type MessageStatus = " " | "-" | "+" | "*";
+export enum MessageStatusEnum {
+  PublicUnread = " ",
+  PublicRead = "-",
+  PrivateUnread = "+",
+  PrivateRead = "*",
+  CommentToSysopUnread = "~",
+  CommentToSysopRead = "`",
+  PasswordProtectedUnread = "%",
+  PasswordProtectedRead = "^",
+  GroupPasswordUnread = "!",
+  GroupPasswordRead = "#",
+  GroupPasswordToAll = "$",
+}
+// export type MessageStatus =
+//   | " "
+//   | "-"
+//   | "+"
+//   | "*"
+//   | "~"
+//   | "`"
+//   | "%"
+//   | "^"
+//   | "!"
+//   | "#"
+//   | "$";

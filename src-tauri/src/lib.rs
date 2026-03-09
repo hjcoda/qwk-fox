@@ -136,10 +136,14 @@ fn get_conferences(
     let conn = db.0.lock().map_err(|e| e.to_string())?;
 
     let mut stmt = conn
-        .prepare(
-            "SELECT c.conference_id, title, COUNT(m.id) AS message_count, COUNT(CASE WHEN m.type_id = ' ' THEN 1 END) AS unread_count FROM conferences c LEFT JOIN messages m ON c.conference_id = m.conference_id
-WHERE m.bbs_id = ?1
-GROUP BY c.id",
+        .prepare("SELECT c.conference_id, 
+       title, 
+       COUNT(m.id) AS message_count, 
+       COUNT(CASE WHEN m.type_id IN (' ', '+', '~', '%', '!', '$') THEN 1 END) AS unread_count 
+FROM conferences c 
+INNER JOIN messages m ON c.conference_id = m.conference_id 
+    AND m.bbs_id = ?1
+GROUP BY m.conference_id",
         )
         .map_err(|e| e.to_string())?;
 

@@ -149,6 +149,7 @@ export const MainPage = ({
               <GroupBox className={"padded"} label={"Messages"}>
                 <MessageList
                   conference_id={conferenceId ? conferenceId : null}
+                  hideRead={appSettings.hideRead}
                   messages={messages}
                   onSelectedMessageChanged={onSelectedMessageChanged}
                 />

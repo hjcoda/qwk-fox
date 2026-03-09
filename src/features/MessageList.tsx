@@ -1,32 +1,37 @@
 import { Message } from "../data/DTO";
+import { MessageIsRead } from "../data/MessageUtils";
 import { ScrollTable } from "../ui";
 import { TableRowData } from "../ui/ScrollTable.types";
 
 export const MessageList = ({
   messages,
   conference_id,
+  hideRead,
   onSelectedMessageChanged,
 }: {
   messages: Message[] | null;
   conference_id: number | null;
+  hideRead: boolean;
   onSelectedMessageChanged: (message_id: number) => void;
 }): React.ReactElement => {
   const data =
     conference_id && messages
-      ? messages.map((m) => {
-          return {
-            index: m.msg_id,
-            disabled: false,
-            data: {
-              id: m.msg_id,
-              subject: m.subject,
-              date: m.date,
-              from: m.from,
-              to: m.to,
-              type: m.type_id,
-            },
-          };
-        })
+      ? messages
+          .filter((m) => !hideRead || !MessageIsRead(m.type_id))
+          .map((m) => {
+            return {
+              index: m.msg_id,
+              disabled: false,
+              data: {
+                id: m.msg_id,
+                subject: m.subject,
+                date: m.date,
+                from: m.from,
+                to: m.to,
+                type: m.type_id,
+              },
+            };
+          })
       : [];
 
   return (
