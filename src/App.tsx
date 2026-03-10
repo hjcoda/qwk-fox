@@ -13,7 +13,7 @@ import { useTauriEvent } from "./hooks/useTauriEvent";
 import { BBSWizard } from "./pages/BBSWizard";
 import { MainPage } from "./pages/MainPage";
 
-import { styleReset, WindowContent } from "react95";
+import { Fieldset, styleReset, WindowContent } from "react95";
 // pick a theme of your choice
 import original from "react95/dist/themes/original";
 // original Windows95 font (optionally)
@@ -78,7 +78,7 @@ async function create({
     items: [
       {
         checked: isHideReadEnabled(),
-        text: "Hide Read",
+        text: "Hide Read Messages",
         enabled: true,
         action: () => {
           toggleHideRead();
@@ -142,11 +142,20 @@ function App() {
     });
   }, [hideRead]);
 
+
   async function importQWKFileToDB() {
+    const fileExtensions = [];
+    for (let i = 1; i < 10; i++) {
+      fileExtensions.push(`qw${i}`);
+    }
+    for (let i = 10; i < 100; i++) {
+      fileExtensions.push(`q${i}`);
+    }
+
     // Use frontend dialog API to pick file (non-blocking)
     const selected = await open({
       multiple: false,
-      filters: [{ name: "QWK Files", extensions: ["qwk", "zip"] }],
+      filters: [{ name: "QWK Files", extensions: ["qwk", "zip", ...fileExtensions] }],
     });
     if (!selected) {
       return; // User cancelled

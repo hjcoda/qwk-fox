@@ -9,6 +9,7 @@ import { IconServerList } from "../features/IconServerList";
 import { MessageList } from "../features/MessageList";
 import { MessageTextBox } from "../features/MessageTextBox";
 import { useTauriEvent } from "../hooks/useTauriEvent";
+import { StatusBar } from "../features/StatusBar";
 
 type UpdateMessagesPayload = {
   bbs_id: string;
@@ -133,8 +134,7 @@ export const MainPage = ({
           >
             <Pane
               className="expand-contents"
-              minSize="200px"
-              defaultSize="300px"
+              defaultSize="35%"
             >
               <GroupBox className={"padded"} label={"Conferences"}>
                 <ConferenceList
@@ -163,9 +163,7 @@ export const MainPage = ({
           </GroupBox>
         </Pane>
       </SplitPane>
-      <Frame variant="status">
-        <p className="status-bar-field">{`User name : ${servers.find((s) => s.bbs_id === bbsId)?.user_name}`}</p>
-      </Frame>
+      <StatusBar servers={servers} bbsId={bbsId} />
     </div>
   );
 };

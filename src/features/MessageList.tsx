@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Message } from "../data/DTO";
 import { MessageIsRead } from "../data/MessageUtils";
 import { ScrollTable } from "../ui";
@@ -14,24 +15,25 @@ export const MessageList = ({
   hideRead: boolean;
   onSelectedMessageChanged: (message_id: number) => void;
 }): React.ReactElement => {
+  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
   const data =
     conference_id && messages
       ? messages
-          .filter((m) => !hideRead || !MessageIsRead(m.type_id))
-          .map((m) => {
-            return {
-              index: m.msg_id,
-              disabled: false,
-              data: {
-                id: m.msg_id,
-                subject: m.subject,
-                date: m.date,
-                from: m.from,
-                to: m.to,
-                type: m.type_id,
-              },
-            };
-          })
+        .filter((m) => !hideRead || (!MessageIsRead(m.type_id) || m.msg_id === selectedMessageId))
+        .map((m) => {
+          return {
+            index: m.msg_id,
+            disabled: false,
+            data: {
+              id: m.msg_id,
+              subject: m.subject,
+              date: m.date,
+              from: m.from,
+              to: m.to,
+              type: m.type_id,
+            },
+          };
+        })
       : [];
 
   return (
@@ -45,6 +47,7 @@ export const MessageList = ({
       ]}
       data={data}
       onSelectedIndexChange={(index) => {
+        setSelectedMessageId(index);
         onSelectedMessageChanged(index);
       }}
       rowItemRenderer={(data: TableRowData, accessorKey: string) => {
