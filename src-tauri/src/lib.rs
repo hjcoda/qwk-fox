@@ -16,6 +16,14 @@ struct ImportCompletePayload {
     //records_imported: usize,
 }
 
+#[derive(Serialize, Clone)]
+struct ImportProgressPayload {
+    stage: String,
+    current: usize,
+    total: usize,
+    percent: f32,
+}
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 async fn import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Result<(), String> {
@@ -73,7 +81,8 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
     }
 
     // Store messages
-    for message in &parser.messages {
+    let total_messages = parser.messages.len();
+    for (index, message) in parser.messages.iter().enumerate() {
         conn.execute(
             "INSERT OR REPLACE INTO messages (msg_id, type_id, date, time, to_field, from_field, in_reply_to, message_count, conference_id, text, subject, bbs_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
             params![
@@ -91,6 +100,17 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
                 server.bbs_id,
             ],
         ).map_err(|e| e.to_string())?;
+
+        let current = index + 1;
+        if total_messages > 0 && (current % 50 == 0 || current == total_messages) {
+            let percent = (current as f32 / total_messages as f32) * 100.0;
+            let _ = app.emit("import-progress", ImportProgressPayload {
+                stage: "messages".to_string(),
+                current,
+                total: total_messages,
+                percent,
+            });
+        }
     }
 
     Ok(())

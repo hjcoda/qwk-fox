@@ -13,12 +13,13 @@ import { useTauriEvent } from "./hooks/useTauriEvent";
 import { BBSWizard } from "./pages/BBSWizard";
 import { MainPage } from "./pages/MainPage";
 
-import { Fieldset, styleReset, WindowContent } from "react95";
+import { styleReset } from "react95";
 // pick a theme of your choice
 import original from "react95/dist/themes/original";
 // original Windows95 font (optionally)
 import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
 import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
+import { StatusBar } from "./features/StatusBar";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -109,9 +110,27 @@ function App() {
   const [servers, setServers] = useState<Server[]>([]);
   const [lastImportTime, setLastImportTime] = useState<number>();
   const [hideRead, setHideRead] = useState<boolean>(false);
+  const [importProgress, setImportProgress] = useState<{
+    stage: string;
+    current: number;
+    total: number;
+    percent: number;
+  } | null>(null);
 
   useTauriEvent("import-complete", () => {
+    setImportProgress(null);
     setLastImportTime(Date.now());
+  });
+
+  useTauriEvent("import-progress", (payload) => {
+    setImportProgress(
+      payload as {
+        stage: string;
+        current: number;
+        total: number;
+        percent: number;
+      },
+    );
   });
 
   // Set initial zoom to 90%
@@ -142,7 +161,6 @@ function App() {
     });
   }, [hideRead]);
 
-
   async function importQWKFileToDB() {
     const fileExtensions = [];
     for (let i = 1; i < 10; i++) {
@@ -155,7 +173,9 @@ function App() {
     // Use frontend dialog API to pick file (non-blocking)
     const selected = await open({
       multiple: false,
-      filters: [{ name: "QWK Files", extensions: ["qwk", "zip", ...fileExtensions] }],
+      filters: [
+        { name: "QWK Files", extensions: ["qwk", "zip", ...fileExtensions] },
+      ],
     });
     if (!selected) {
       return; // User cancelled
@@ -187,13 +207,14 @@ function App() {
       <ThemeProvider theme={original}>
         <div className="window-content">
           {servers.length === 0 ? (
-            <BBSWizard />
+            <BBSWizard importProgress={importProgress} />
           ) : (
             <MainPage
               appSettings={{
                 hideRead,
               }}
               servers={servers}
+              importProgress={importProgress}
             />
           )}
         </div>

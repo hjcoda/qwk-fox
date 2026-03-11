@@ -56,8 +56,11 @@ export const MessageTextBox = ({
     .split(/\r?\n/)
     .slice(messageExtensions.firstLineOfMessageText);
 
+  const classNames = ["message-box-container"];
+  !message && classNames.push("disabled");
+
   return (
-    <div className="message-box-container">
+    <div className={classNames.join(" ")}>
       <MessageDetailSlug message={message} />
       <ScrollView className="message-content-scroll">
         <pre className={"message-text"}>

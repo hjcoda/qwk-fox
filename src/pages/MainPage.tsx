@@ -22,9 +22,16 @@ type UpdateMessagesPayload = {
 export const MainPage = ({
   appSettings,
   servers,
+  importProgress,
 }: {
   appSettings: AppSettings;
   servers: Server[];
+  importProgress: {
+    stage: string;
+    current: number;
+    total: number;
+    percent: number;
+  } | null;
 }) => {
   const [bbsId, setBBSId] = useState<string | null>(null);
   const [lastUpdateTimeMessages, setLastUpdateTimeMessages] =
@@ -167,7 +174,11 @@ export const MainPage = ({
           </GroupBox>
         </Pane>
       </SplitPane>
-      <StatusBar servers={servers} bbsId={bbsId} />
+      <StatusBar
+        servers={servers}
+        bbsId={bbsId}
+        importProgress={importProgress}
+      />
     </div>
   );
 };

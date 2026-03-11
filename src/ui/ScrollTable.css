@@ -4,6 +4,8 @@
     color: inherit;
     cursor: default;
   }
+
+  border-collapse: unset;
 }
 
 .scrolltable-container {
