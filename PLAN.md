@@ -1,6 +1,8 @@
 # QWK Support
 
-- Support QWKE format
+- Parse QWKE fields prior to DB import
+- HEADERS.DAT into DB table for augmenting messages
+- More unit testing for Rust library
 
 # FTP
 
@@ -12,11 +14,16 @@
 # Import
 
 - Loading bar during import (avoid the browser 'wait' dialog/locking up)
-- Resolving hierarchy is difficult if message IDs are local to a packet, then we will have ID - collisions across
+- Improve hierarchy resolving by using HEADERS.DAT extensions if available.
 
 # Aesthetic
 
 - Try platinum skin?
-- Thread view (toggleable)
+- Optionally remove quoted text from messages.
 - Settings dialog
 - Subscriptions management dialog
+- Sorting and filtering messages
+
+# Automation
+
+- e2e testing
