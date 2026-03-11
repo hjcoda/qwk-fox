@@ -27,6 +27,7 @@
     "react-split-pane": "^3.2.0",
     "react-tooltip": "^5.30.0",
     "react95": "^4.0.0",
+    "rsuite": "^6.1.2",
     "styled-components": "^6.3.11"
   },
   "devDependencies": {

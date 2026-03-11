@@ -6,11 +6,12 @@ import { AppSettings } from "../AppSettings";
 import { Conference, Message, MessageStatusEnum, Server } from "../data/DTO";
 import { ConferenceList } from "../features/ConferenceList";
 import { IconServerList } from "../features/IconServerList";
-import { MessageList } from "../features/MessageList";
 import { MessageTextBox } from "../features/MessageTextBox";
 import { useTauriEvent } from "../hooks/useTauriEvent";
 import { StatusBar } from "../features/StatusBar";
 import { getReadMessageStatus } from "../data/MessageUtils";
+import { MessageTree } from "../features/MessageTree";
+import { MessageList } from "../features/MessageList";
 
 type UpdateMessagesPayload = {
   bbs_id: string;
@@ -124,6 +125,12 @@ export const MainPage = ({
     setMessage(message);
   };
 
+  const messageCollectionProps = {
+    hideRead: appSettings.hideRead,
+    messages,
+    onSelectedMessageChanged,
+  };
+
   return (
     <div className="main-page">
       <GroupBox className={"padded"} label={"Servers"}>
@@ -157,13 +164,12 @@ export const MainPage = ({
               </GroupBox>
             </Pane>
             <Pane className="expand-contents">
-              <GroupBox className={"padded"} label={"Messages"}>
-                <MessageList
-                  conference_id={conferenceId ? conferenceId : null}
-                  hideRead={appSettings.hideRead}
-                  messages={messages}
-                  onSelectedMessageChanged={onSelectedMessageChanged}
-                />
+              <GroupBox className={"padded expand-contents"} label={"Messages"}>
+                {appSettings.showThreads ? (
+                  <MessageTree {...messageCollectionProps} />
+                ) : (
+                  <MessageList {...messageCollectionProps} />
+                )}
               </GroupBox>
             </Pane>
           </SplitPane>

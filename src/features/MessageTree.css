@@ -1,0 +1,16 @@
+.rs-table-row-header .rs-table-cell-content {
+  background-color: #c6c6c6;
+  font-size: initial;
+  color: black;
+}
+
+.tree-row--highlighted {
+  background-color: #060084 !important;
+  color: white !important;
+  border: dotted 2px white !important;
+}
+
+.tree-row--highlighted--unfocussed {
+  background-color: white !important;
+  border: solid 2px #060084 !important;
+}

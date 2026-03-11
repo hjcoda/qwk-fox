@@ -6,7 +6,6 @@ import { TableRowData } from "../ui/ScrollTable.types";
 
 export const MessageList = ({
   messages,
-  conference_id,
   hideRead,
   onSelectedMessageChanged,
 }: {
@@ -15,11 +14,17 @@ export const MessageList = ({
   hideRead: boolean;
   onSelectedMessageChanged: (message_id: number) => void;
 }): React.ReactElement => {
-  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
-  const data =
-    conference_id && messages
-      ? messages
-        .filter((m) => !hideRead || (!MessageIsRead(m.type_id) || m.msg_id === selectedMessageId))
+  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
+    null,
+  );
+  const data = messages
+    ? messages
+        .filter(
+          (m) =>
+            !hideRead ||
+            !MessageIsRead(m.type_id) ||
+            m.msg_id === selectedMessageId,
+        )
         .map((m) => {
           return {
             index: m.msg_id,
@@ -34,7 +39,7 @@ export const MessageList = ({
             },
           };
         })
-      : [];
+    : [];
 
   return (
     <ScrollTable

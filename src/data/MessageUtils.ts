@@ -1,4 +1,5 @@
-import { MessageStatusEnum } from "./DTO";
+import { TreeNode } from "rsuite/esm/internals/Tree/types";
+import { Message, MessageStatusEnum } from "./DTO";
 
 const ReadMessageTypes = [
   MessageStatusEnum.PublicRead,
@@ -28,4 +29,50 @@ export const getReadMessageStatus = (messageStatus: MessageStatusEnum) => {
     return MessageStatusEnum.GroupPasswordRead;
 
   return messageStatus;
+};
+
+export const buildMessageTree = (messages: Message[]): TreeNode[] => {
+  // Create a map to store nodes by their ID for quick lookup
+  const nodeMap = new Map<string | number, TreeNode>();
+
+  // First pass: Create TreeNode objects with empty children arrays
+  messages.forEach((message) => {
+    nodeMap.set(message.msg_id, {
+      ...message,
+      value: message.msg_id,
+    });
+  });
+
+  const roots: TreeNode[] = [];
+
+  // Second pass: Build the tree structure
+  messages.forEach((message) => {
+    const currentNode = nodeMap.get(message.msg_id)!;
+
+    if (
+      message.in_reply_to === null ||
+      message.in_reply_to === undefined ||
+      message.in_reply_to === 0
+    ) {
+      // This is a root node
+      roots.push(currentNode);
+    } else {
+      // This node has a parent
+      const parentNode = nodeMap.get(message.in_reply_to);
+      if (parentNode) {
+        if (!parentNode.children) {
+          parentNode.children = [];
+        }
+        parentNode.children.push(currentNode);
+      } else {
+        // Handle case where parent doesn't exist (orphaned node)
+        // console.warn(
+        //   `Parent with id ${node.parentId} not found for node ${node.id}`,
+        // );
+        roots.push(currentNode);
+      }
+    }
+  });
+
+  return roots;
 };

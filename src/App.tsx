@@ -19,7 +19,6 @@ import original from "react95/dist/themes/original";
 // original Windows95 font (optionally)
 import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
 import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
-import { StatusBar } from "./features/StatusBar";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -44,15 +43,19 @@ const macOS = navigator.userAgent.includes("Macintosh");
 
 interface MenuActions {
   isHideReadEnabled: () => boolean;
+  isShowThreadsEnabled: () => boolean;
   importQWKFileToDB: () => void;
   toggleHideRead: () => void;
+  toggleShowThreads: () => void;
   aboutDialog: () => void;
 }
 
 async function create({
   isHideReadEnabled,
+  isShowThreadsEnabled,
   importQWKFileToDB,
   toggleHideRead,
+  toggleShowThreads,
   aboutDialog,
 }: MenuActions) {
   const fileMenu = await Submenu.new({
@@ -85,6 +88,14 @@ async function create({
           toggleHideRead();
         },
       },
+      {
+        checked: isShowThreadsEnabled(),
+        text: "Show Message Threads",
+        enabled: true,
+        action: () => {
+          toggleShowThreads();
+        },
+      },
     ],
   });
   const helpMenu = await Submenu.new({
@@ -110,6 +121,7 @@ function App() {
   const [servers, setServers] = useState<Server[]>([]);
   const [lastImportTime, setLastImportTime] = useState<number>();
   const [hideRead, setHideRead] = useState<boolean>(false);
+  const [showThreads, setShowThreads] = useState<boolean>(true);
   const [importProgress, setImportProgress] = useState<{
     stage: string;
     current: number;
@@ -155,11 +167,13 @@ function App() {
   useEffect(() => {
     create({
       isHideReadEnabled: () => hideRead,
+      isShowThreadsEnabled: () => showThreads,
       importQWKFileToDB: () => importQWKFileToDB(),
       toggleHideRead: () => setHideRead(!hideRead),
+      toggleShowThreads: () => setShowThreads(!showThreads),
       aboutDialog: () => aboutDialog(),
     });
-  }, [hideRead]);
+  }, [hideRead, showThreads]);
 
   async function importQWKFileToDB() {
     const fileExtensions = [];
@@ -212,6 +226,7 @@ function App() {
             <MainPage
               appSettings={{
                 hideRead,
+                showThreads,
               }}
               servers={servers}
               importProgress={importProgress}
