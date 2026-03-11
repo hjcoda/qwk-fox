@@ -1,5 +1,4 @@
 export type Server = {
-  id: number;
   bbs_id: string;
   bbs_name: string;
   city_and_state: string;
@@ -42,15 +41,3 @@ export enum MessageStatusEnum {
   GroupPasswordRead = "#",
   GroupPasswordToAll = "$",
 }
-// export type MessageStatus =
-//   | " "
-//   | "-"
-//   | "+"
-//   | "*"
-//   | "~"
-//   | "`"
-//   | "%"
-//   | "^"
-//   | "!"
-//   | "#"
-//   | "$";

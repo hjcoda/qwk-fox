@@ -1,21 +1,22 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 import { Pane, SplitPane } from "react-split-pane";
-import { Frame, GroupBox } from "react95";
+import { GroupBox } from "react95";
 import { AppSettings } from "../AppSettings";
-import { Conference, Message, MessageStatus, Server } from "../data/DTO";
+import { Conference, Message, MessageStatusEnum, Server } from "../data/DTO";
 import { ConferenceList } from "../features/ConferenceList";
 import { IconServerList } from "../features/IconServerList";
 import { MessageList } from "../features/MessageList";
 import { MessageTextBox } from "../features/MessageTextBox";
 import { useTauriEvent } from "../hooks/useTauriEvent";
 import { StatusBar } from "../features/StatusBar";
+import { getReadMessageStatus } from "../data/MessageUtils";
 
 type UpdateMessagesPayload = {
   bbs_id: string;
   conference_id: string;
   message_ids: number[];
-  status: MessageStatus;
+  status: MessageStatusEnum;
 };
 
 export const MainPage = ({
@@ -99,15 +100,21 @@ export const MainPage = ({
   };
 
   const onSelectedMessageChanged = (message_id: number) => {
+    let message = null;
     if (bbsId && conferenceId) {
-      updateMessagesStatus({
-        bbs_id: bbsId,
-        conference_id: conferenceId.toString(),
-        message_ids: [message_id],
-        status: "-",
-      });
+      message = messages.find((m) => m.msg_id === message_id) ?? null;
+      if (message) {
+        const status = message.type_id;
+        const newStatus = getReadMessageStatus(status);
+        updateMessagesStatus({
+          bbs_id: bbsId,
+          conference_id: conferenceId.toString(),
+          message_ids: [message_id],
+          status: newStatus,
+        });
+      }
     }
-    setMessage(messages.find((m) => m.msg_id === message_id) ?? null);
+    setMessage(message);
   };
 
   return (
@@ -132,10 +139,7 @@ export const MainPage = ({
             dividerClassName={"h-divider"}
             resizable={true}
           >
-            <Pane
-              className="expand-contents"
-              defaultSize="35%"
-            >
+            <Pane className="expand-contents" defaultSize="35%">
               <GroupBox className={"padded"} label={"Conferences"}>
                 <ConferenceList
                   bbsId={bbsId ?? ""}

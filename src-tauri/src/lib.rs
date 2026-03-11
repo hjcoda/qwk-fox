@@ -48,18 +48,18 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
 
     let db = app.state::<DbConnection>();
     let conn = db.0.lock().map_err(|e| e.to_string())?;
-    let bbs_id = &parser.bbs_id;
+    let server = &parser.server;
 
     conn.execute(
         "INSERT OR REPLACE INTO servers (bbs_id, bbs_name, city_and_state, phone_number, sysop_name, creation_time, user_name) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
         params![
-            bbs_id,
-            &parser.bbs_name,
-            &parser.city_and_state,
-            &parser.phone_number,
-            &parser.sysop_name,
-            &parser.creation_time,
-            &parser.user_name,
+            server.bbs_id,
+            server.bbs_name,
+            server.city_and_state,
+            server.phone_number,
+            server.sysop_name,
+            server.creation_time,
+            server.user_name,
         ],
     ).map_err(|e| e.to_string())?;
 
@@ -67,7 +67,7 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
     for conference in &parser.conferences {
         conn.execute(
             "INSERT OR REPLACE INTO conferences (conference_id, title, bbs_id) VALUES (?1, ?2, ?3)",
-            params![conference.id, &conference.title, bbs_id,],
+            params![conference.id, &conference.title, server.bbs_id,],
         )
         .map_err(|e| e.to_string())?;
     }
@@ -88,7 +88,7 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
                 message.conference_id,
                 &message.text,
                 &message.subject,
-                bbs_id,
+                server.bbs_id,
             ],
         ).map_err(|e| e.to_string())?;
     }
@@ -103,21 +103,20 @@ let db = app.state::<DbConnection>();
 
     let mut stmt = conn
         .prepare(
-            "SELECT id, bbs_id, bbs_name, city_and_state, phone_number, sysop_name, creation_time, user_name FROM servers",
+            "SELECT bbs_id, bbs_name, city_and_state, phone_number, sysop_name, creation_time, user_name FROM servers",
         )
         .map_err(|e| e.to_string())?;
 
     let servers = stmt
         .query_map([], |row| {
             Ok(qwk_rs::Server {
-                id: row.get(0)?,
-                bbs_id: row.get(1)?,
-                bbs_name: row.get(2)?,
-                city_and_state: row.get(3)?,
-                phone_number: row.get(4)?,
-                sysop_name: row.get(5)?,
-                creation_time: row.get(6)?,
-                user_name: row.get(7)?
+                bbs_id: row.get(0)?,
+                bbs_name: row.get(1)?,
+                city_and_state: row.get(2)?,
+                phone_number: row.get(3)?,
+                sysop_name: row.get(4)?,
+                creation_time: row.get(5)?,
+                user_name: row.get(6)?
             })
         })
         .map_err(|e| e.to_string())?
