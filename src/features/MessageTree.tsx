@@ -12,11 +12,9 @@ import { Frame } from "react95";
 
 export const MessageTree = ({
   messages,
-  hideRead,
   onSelectedMessageChanged,
 }: {
   messages: Message[] | null;
-  hideRead: boolean;
   onSelectedMessageChanged: (message_id: number) => void;
 }) => {
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(

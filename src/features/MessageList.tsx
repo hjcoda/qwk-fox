@@ -10,7 +10,6 @@ export const MessageList = ({
   onSelectedMessageChanged,
 }: {
   messages: Message[] | null;
-  conference_id: number | null;
   hideRead: boolean;
   onSelectedMessageChanged: (message_id: number) => void;
 }): React.ReactElement => {
