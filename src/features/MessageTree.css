@@ -14,3 +14,8 @@
   background-color: white !important;
   border: solid 2px #060084 !important;
 }
+
+.rs-table-cell-content {
+  user-select: none;
+  cursor: default;
+}

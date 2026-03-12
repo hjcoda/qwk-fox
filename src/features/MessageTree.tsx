@@ -77,7 +77,7 @@ export const MessageTree = ({
     dataKey: keyof Message;
   }) => {
     if (rowData) {
-      const classNames = [];
+      const classNames = ["tree-row"];
       if (rowData.value === selectedMessageId) {
         classNames.push(
           isFocused
@@ -108,14 +108,10 @@ export const MessageTree = ({
         defaultExpandAllRows={false}
         cellBordered
         rowKey="value"
-        data={
-          sortColumn && sortType
-            ? useSortedData<TreeNode>(data, {
-                key: sortColumn,
-                direction: sortType,
-              })
-            : data
-        }
+        data={useSortedData<TreeNode>(data, {
+          key: sortColumn,
+          direction: sortType,
+        })}
         fillHeight
         shouldUpdateScroll={false}
         onRowClick={({ value }) => {
