@@ -14,12 +14,10 @@ type ConferenceDisplay = {
 };
 
 export const ConferenceList = ({
-  bbsId,
   conferences,
   hideRead,
   onSelectedConferenceChanged,
 }: {
-  bbsId: string;
   conferences: Conference[] | null;
   hideRead: boolean;
   onSelectedConferenceChanged: (index: number) => void;

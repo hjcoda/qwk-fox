@@ -11,7 +11,6 @@ import { useTauriEvent } from "../hooks/useTauriEvent";
 import { StatusBar } from "../features/StatusBar";
 import { getReadMessageStatus } from "../data/MessageUtils";
 import { MessageTree } from "../features/MessageTree";
-import { MessageList } from "../features/MessageList";
 
 type UpdateMessagesPayload = {
   bbs_id: string;
@@ -167,7 +166,6 @@ export const MainPage = ({
                 label={"Conferences"}
               >
                 <ConferenceList
-                  bbsId={bbsId ?? ""}
                   hideRead={appSettings.hideRead}
                   conferences={conferences}
                   onSelectedConferenceChanged={onSelectedConferenceChanged}

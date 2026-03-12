@@ -1,4 +1,4 @@
-import { SortType, Table } from "rsuite";
+import { SortType } from "rsuite";
 import { Message } from "../data/DTO";
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
 import {
@@ -12,7 +12,6 @@ import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
 import "./MessageTree.css";
 import { useState } from "react";
-import { Frame } from "react95";
 import { useSortedData } from "../hooks/useSortedData";
 import { StyledTable } from "../ui/StyledTable";
 
