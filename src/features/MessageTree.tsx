@@ -11,9 +11,10 @@ import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
 import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
 import "./MessageTree.css";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Frame } from "react95";
 import { useSortedData } from "../hooks/useSortedData";
+import { StyledTable } from "../ui/StyledTable";
 
 export const MessageTree = ({
   hideRead,
@@ -26,19 +27,16 @@ export const MessageTree = ({
   messages: Message[] | null;
   onSelectedMessageChanged: (message_id: number) => void;
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>();
   const [sortColumn, setSortColumn] = useState<string | undefined>();
   const [sortType, setSortType] = useState<SortType | undefined>();
-  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
-    null,
-  );
+
   const data: TreeNode[] = messages
     ? useThreads
       ? buildMessageTree(messages)
       : filterMessages(messages, { hideRead })
     : [];
-
-  const [isFocused, setIsFocused] = useState(false);
-  const tableContainerRef = useRef<HTMLTableRowElement | null>(null);
 
   const handleSortColumn = (
     sortColumn: string | undefined,
@@ -47,38 +45,6 @@ export const MessageTree = ({
     setSortColumn(sortColumn);
     setSortType(sortType);
   };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  // Check if the related target (element gaining focus) is outside our table
-  const handleBlur = (event: FocusEvent) => {
-    const relatedTarget = event.relatedTarget as Node;
-    if (
-      tableContainerRef.current &&
-      !tableContainerRef.current.contains(relatedTarget)
-    ) {
-      setIsFocused(false);
-    }
-  };
-
-  // Focus management effect
-  useEffect(() => {
-    const container = tableContainerRef.current;
-    if (container) {
-      container.addEventListener("focus", handleFocus);
-      container.addEventListener("blur", handleBlur);
-
-      // Make the container focusable
-      container.tabIndex = -1;
-
-      return () => {
-        container.removeEventListener("focus", handleFocus);
-        container.removeEventListener("blur", handleBlur);
-      };
-    }
-  }, []);
 
   const MessageCell = ({
     rowData,
@@ -90,7 +56,7 @@ export const MessageTree = ({
   }) => {
     if (rowData) {
       const classNames = ["tree-row"];
-      if (rowData.msg_id === selectedMessageId) {
+      if (rowData.msg_id === selectedIndex) {
         classNames.push(
           isFocused
             ? "tree-row--highlighted"
@@ -109,42 +75,39 @@ export const MessageTree = ({
   };
 
   return (
-    <Frame variant="field" ref={tableContainerRef} style={{ width: "100%" }}>
-      <Table
-        sortColumn={sortColumn}
-        sortType={sortType}
-        onSortColumn={handleSortColumn}
-        isTree={useThreads}
-        virtualized
-        defaultExpandAllRows={false}
-        cellBordered
-        rowKey="msg_id"
-        data={useSortedData<TreeNode>(data, {
-          key: sortColumn,
-          direction: sortType,
-        })}
-        fillHeight
-        shouldUpdateScroll={false}
-        onRowClick={({ msg_id }) => {
-          setSelectedMessageId(Number(msg_id));
-          onSelectedMessageChanged(Number(msg_id));
-          // Focus the container when a row is clicked
-          tableContainerRef.current?.focus();
-        }}
-      >
-        <Column flexGrow={1} sortable>
-          <HeaderCell>Subject</HeaderCell>
-          <MessageCell dataKey="subject" />
-        </Column>
-        <Column width={150} sortable>
-          <HeaderCell>From</HeaderCell>
-          <MessageCell dataKey="from" />
-        </Column>
-        <Column flexGrow={1} sortable>
-          <HeaderCell>Date</HeaderCell>
-          <MessageCell dataKey="date" />
-        </Column>
-      </Table>
-    </Frame>
+    <StyledTable
+      sortColumn={sortColumn}
+      sortType={sortType}
+      onSortColumn={handleSortColumn}
+      isTree={useThreads}
+      virtualized
+      defaultExpandAllRows={false}
+      cellBordered
+      rowKey="msg_id"
+      data={useSortedData<TreeNode>(data, {
+        key: sortColumn,
+        direction: sortType,
+      })}
+      fillHeight
+      shouldUpdateScroll={false}
+      onSelectedIndexChanged={(index) => {
+        setSelectedIndex(index);
+        onSelectedMessageChanged(index);
+      }}
+      onFocusUpdate={(focus) => setIsFocused(focus)}
+    >
+      <Column flexGrow={1} sortable>
+        <HeaderCell>Subject</HeaderCell>
+        <MessageCell dataKey="subject" />
+      </Column>
+      <Column width={150} sortable>
+        <HeaderCell>From</HeaderCell>
+        <MessageCell dataKey="from" />
+      </Column>
+      <Column flexGrow={1} sortable>
+        <HeaderCell>Date</HeaderCell>
+        <MessageCell dataKey="date" />
+      </Column>
+    </StyledTable>
   );
 };
