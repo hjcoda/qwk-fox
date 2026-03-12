@@ -1,5 +1,5 @@
-use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
+use base64::Engine;
 use bstr::ByteSlice;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
@@ -89,13 +89,11 @@ fn read_ascii_number(buffer: &[u8]) -> u32 {
 }
 
 fn read_ascii_to_base64(buffer: &[u8]) -> String {
-    // Quirk of the format
-    STANDARD.encode(
-        buffer
-            .iter()
-            .map(|&byte| if byte == 0xe3 { 0x0a } else { byte })
-            .collect::<Vec<u8>>(),
-    )
+    let mut cleaned = Vec::with_capacity(buffer.len());
+    for &byte in buffer {
+        cleaned.push(if byte == 0xe3 { 0x0a } else { byte });
+    }
+    STANDARD.encode(cleaned)
 }
 
 fn read_ascii(buffer: &[u8]) -> String {
@@ -153,7 +151,9 @@ impl Parser {
                     let mut message = Self::process_message_header(&buffer);
 
                     // Read the message text chunks
-                    let mut text_bytes = Vec::<u8>::new();
+                    let mut text_bytes = Vec::<u8>::with_capacity(
+                        (message.message_count as usize).saturating_mul(BUFFER_SIZE),
+                    );
                     for _chunk_num in 1..message.message_count {
                         match reader.read_exact(&mut buffer) {
                             Ok(()) => {

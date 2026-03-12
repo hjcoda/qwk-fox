@@ -37,17 +37,16 @@ export const extractMessageExtensions = (
     messageExtensions.firstLineOfMessageText++;
   }
 
-  while (
-    processKludge(lines[messageExtensions.firstLineOfMessageText]) !== null
-  ) {
-    const kludge = processKludge(
-      lines[messageExtensions.firstLineOfMessageText],
-    );
+  let currentLine = lines[messageExtensions.firstLineOfMessageText];
+  let kludge = currentLine ? processKludge(currentLine) : null;
+  while (kludge !== null) {
     if (kludge) {
       const { key, value } = kludge;
       messageExtensions[key] = value;
       messageExtensions.firstLineOfMessageText++;
     }
+    currentLine = lines[messageExtensions.firstLineOfMessageText];
+    kludge = currentLine ? processKludge(currentLine) : null;
   }
 
   return messageExtensions;

@@ -52,10 +52,10 @@ async fn import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Resu
 }
 
 fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Result<(), String> {
-    let parser = qwk_rs::Parser::from_file(&file_path).unwrap();
+    let parser = qwk_rs::Parser::from_file(&file_path).map_err(|e| e.to_string())?;
 
     let db = app.state::<DbConnection>();
-    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    let mut conn = db.0.lock().map_err(|e| e.to_string())?;
     let server = &parser.server;
 
     conn.execute(
@@ -82,10 +82,15 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
 
     // Store messages
     let total_messages = parser.messages.len();
-    for (index, message) in parser.messages.iter().enumerate() {
-        conn.execute(
-            "INSERT OR REPLACE INTO messages (msg_id, type_id, date, time, to_field, from_field, in_reply_to, message_count, conference_id, text, subject, bbs_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
-            params![
+    let transaction = conn.transaction().map_err(|e| e.to_string())?;
+    {
+        let mut stmt = transaction
+            .prepare(
+                "INSERT OR REPLACE INTO messages (msg_id, type_id, date, time, to_field, from_field, in_reply_to, message_count, conference_id, text, subject, bbs_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
+            )
+            .map_err(|e| e.to_string())?;
+        for (index, message) in parser.messages.iter().enumerate() {
+            stmt.execute(params![
                 message.msg_id,
                 message.type_id.to_string(),
                 &message.date,
@@ -98,20 +103,25 @@ fn perform_import_qwk_file_to_db(app: tauri::AppHandle, file_path: String) -> Re
                 &message.text,
                 &message.subject,
                 server.bbs_id,
-            ],
-        ).map_err(|e| e.to_string())?;
+            ])
+            .map_err(|e| e.to_string())?;
 
-        let current = index + 1;
-        if total_messages > 0 && (current % 50 == 0 || current == total_messages) {
-            let percent = (current as f32 / total_messages as f32) * 100.0;
-            let _ = app.emit("import-progress", ImportProgressPayload {
-                stage: "messages".to_string(),
-                current,
-                total: total_messages,
-                percent,
-            });
+            let current = index + 1;
+            if total_messages > 0 && (current % 50 == 0 || current == total_messages) {
+                let percent = (current as f32 / total_messages as f32) * 100.0;
+                let _ = app.emit(
+                    "import-progress",
+                    ImportProgressPayload {
+                        stage: "messages".to_string(),
+                        current,
+                        total: total_messages,
+                        percent,
+                    },
+                );
+            }
         }
     }
+    transaction.commit().map_err(|e| e.to_string())?;
 
     Ok(())
 }
@@ -353,7 +363,6 @@ pub fn run() {
                 .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
             Ok(())
         })
-        .plugin(tauri_plugin_stronghold::Builder::new(|_pass| todo!()).build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())

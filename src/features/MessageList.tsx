@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Message } from "../data/DTO";
 import { MessageIsRead } from "../data/MessageUtils";
 import { ScrollTable } from "../ui";
@@ -16,29 +16,33 @@ export const MessageList = ({
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
     null,
   );
-  const data = messages
-    ? messages
-        .filter(
-          (m) =>
-            !hideRead ||
-            !MessageIsRead(m.type_id) ||
-            m.msg_id === selectedMessageId,
-        )
-        .map((m) => {
-          return {
-            index: m.msg_id,
-            disabled: false,
-            data: {
-              id: m.msg_id,
-              subject: m.subject,
-              date: m.date,
-              from: m.from,
-              to: m.to,
-              type: m.type_id,
-            },
-          };
-        })
-    : [];
+  const data = useMemo(() => {
+    if (!messages) {
+      return [];
+    }
+
+    return messages
+      .filter(
+        (m) =>
+          !hideRead ||
+          !MessageIsRead(m.type_id) ||
+          m.msg_id === selectedMessageId,
+      )
+      .map((m) => {
+        return {
+          index: m.msg_id,
+          disabled: false,
+          data: {
+            id: m.msg_id,
+            subject: m.subject,
+            date: m.date,
+            from: m.from,
+            to: m.to,
+            type: m.type_id,
+          },
+        };
+      });
+  }, [messages, hideRead, selectedMessageId]);
 
   return (
     <ScrollTable

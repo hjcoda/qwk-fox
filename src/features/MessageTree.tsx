@@ -96,9 +96,6 @@ export const MessageTree = ({
         data={data}
         fillHeight
         shouldUpdateScroll={false}
-        onExpandChange={(isOpen, rowData) => {
-          console.log(isOpen, rowData);
-        }}
         onRowClick={({ value }) => {
           setSelectedMessageId(Number(value));
           onSelectedMessageChanged(Number(value));

@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pane, SplitPane } from "react-split-pane";
 import { GroupBox } from "react95";
 import { AppSettings } from "../AppSettings";
@@ -107,10 +107,18 @@ export const MainPage = ({
     setMessage(null);
   };
 
+  const messageById = useMemo(() => {
+    const lookup = new Map<number, Message>();
+    for (const item of messages) {
+      lookup.set(item.msg_id, item);
+    }
+    return lookup;
+  }, [messages]);
+
   const onSelectedMessageChanged = (message_id: number) => {
     let message = null;
     if (bbsId && conferenceId) {
-      message = messages.find((m) => m.msg_id === message_id) ?? null;
+      message = messageById.get(message_id) ?? null;
       if (message) {
         const status = message.type_id;
         const newStatus = getReadMessageStatus(status);

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Conference } from "../data/DTO";
 import { ScrollTable } from "../ui";
 
@@ -12,20 +13,24 @@ export const ConferenceList = ({
   hideRead: boolean;
   onSelectedConferenceChanged: (index: number) => void;
 }): React.ReactElement => {
-  const data = conferences
-    ?.filter((c) => !hideRead || c.unread_count > 0)
-    .map((c) => {
-      return {
-        index: c.id,
-        disabled: c.message_count === 0,
-        data: {
-          id: c.id,
-          title: c.title,
-          message_count: c.message_count,
-          unread_count: c.unread_count,
-        },
-      };
-    });
+  const data = useMemo(() => {
+    return (
+      conferences
+        ?.filter((c) => !hideRead || c.unread_count > 0)
+        .map((c) => {
+          return {
+            index: c.id,
+            disabled: c.message_count === 0,
+            data: {
+              id: c.id,
+              title: c.title,
+              message_count: c.message_count,
+              unread_count: c.unread_count,
+            },
+          };
+        }) ?? []
+    );
+  }, [conferences, hideRead]);
 
   return (
     <ScrollTable
@@ -36,7 +41,7 @@ export const ConferenceList = ({
         { title: "Count", accessorKey: "message_count", width: 20 },
         { title: "Unread", accessorKey: "unread_count", width: 20 },
       ]}
-      data={data ?? []}
+      data={data}
       onSelectedIndexChange={(index) => {
         onSelectedConferenceChanged(index);
       }}
