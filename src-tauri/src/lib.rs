@@ -167,7 +167,7 @@ fn get_conferences(
     let mut stmt = conn
         .prepare("SELECT c.conference_id,
        c.title,
-       COUNT(m.id) AS message_count,
+       COUNT(CASE WHEN m.type_id NOT IN ('V') THEN 1 END) AS message_count, 
        SUM(CASE WHEN m.type_id IN (' ', '+', '~', '%', '!', '$') THEN 1 ELSE 0 END) AS unread_count
 FROM conferences c
 LEFT JOIN messages m ON c.conference_id = m.conference_id 
@@ -204,7 +204,7 @@ fn get_messages(
     let conn = db.0.lock().map_err(|e| e.to_string())?;
 
     let mut stmt = conn
-        .prepare("SELECT msg_id, type_id, date, time, to_field, from_field, in_reply_to, message_count, conference_id, text, subject FROM messages WHERE bbs_id = ?1 AND conference_id = ?2 ORDER BY msg_id")
+        .prepare("SELECT msg_id, type_id, date, time, to_field, from_field, in_reply_to, message_count, conference_id, text, subject FROM messages WHERE bbs_id = ?1 AND conference_id = ?2 AND type_id is not 'V' ORDER BY msg_id")
         .map_err(|e| e.to_string())?;
 
     let messages = stmt
