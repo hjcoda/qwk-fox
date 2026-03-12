@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 export const useSortedData = <T>(
-  data: T[],
+  data: readonly T[] | undefined,
   sortConfig: {
     key: keyof T | undefined;
     direction: "asc" | "desc" | undefined;
@@ -14,7 +14,7 @@ export const useSortedData = <T>(
   );
 
   return useMemo(() => {
-    if (key && direction) {
+    if (key && direction && data) {
       return [...data].sort((a, b) => {
         const comparison = collator.compare(String(a[key]), String(b[key]));
         return sortConfig.direction === "asc" ? comparison : -comparison;

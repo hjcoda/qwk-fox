@@ -1,0 +1,10 @@
+.rs-table-row-header .rs-table-cell-content {
+  background-color: #c6c6c6;
+  font-size: initial;
+  color: black;
+}
+
+.rs-table-cell-content {
+  user-select: none;
+  cursor: default;
+}

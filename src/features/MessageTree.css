@@ -7,15 +7,37 @@
 .tree-row--highlighted {
   background-color: #060084 !important;
   color: white !important;
-  border: dotted 2px white !important;
+  border-top: dotted 2px white !important;
+  border-bottom: dotted 2px white !important;
+}
+
+.tree-row--highlighted:first-child {
+  border-left: dotted 2px white !important;
+}
+
+.tree-row--highlighted:last-child {
+  border-right: dotted 2px white !important;
 }
 
 .tree-row--highlighted--unfocussed {
   background-color: white !important;
-  border: solid 2px #060084 !important;
+  border-top: solid 2px #060084 !important;
+  border-bottom: solid 2px #060084 !important;
+}
+
+.tree-row--highlighted--unfocussed:first-child {
+  border-left: solid 2px #060084 !important;
+}
+
+.tree-row--highlighted--unfocussed:last-child {
+  border-right: solid 2px #060084 !important;
 }
 
 .rs-table-cell-content {
   user-select: none;
   cursor: default;
+}
+
+.unread-message-row {
+  font-weight: 600;
 }

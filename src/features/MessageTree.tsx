@@ -1,7 +1,11 @@
 import { SortType, Table } from "rsuite";
 import { Message } from "../data/DTO";
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
-import { buildMessageTree, MessageIsRead } from "../data/MessageUtils";
+import {
+  buildMessageTree,
+  filterMessages,
+  MessageIsRead,
+} from "../data/MessageUtils";
 import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
 import Cell from "rsuite/esm/Table/TableCell";
@@ -12,9 +16,13 @@ import { Frame } from "react95";
 import { useSortedData } from "../hooks/useSortedData";
 
 export const MessageTree = ({
+  hideRead,
+  useThreads,
   messages,
   onSelectedMessageChanged,
 }: {
+  hideRead: boolean;
+  useThreads: boolean;
   messages: Message[] | null;
   onSelectedMessageChanged: (message_id: number) => void;
 }) => {
@@ -23,7 +31,11 @@ export const MessageTree = ({
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
     null,
   );
-  const data: TreeNode[] = messages ? buildMessageTree(messages) : [];
+  const data: TreeNode[] = messages
+    ? useThreads
+      ? buildMessageTree(messages)
+      : filterMessages(messages, { hideRead })
+    : [];
 
   const [isFocused, setIsFocused] = useState(false);
   const tableContainerRef = useRef<HTMLTableRowElement | null>(null);
@@ -73,25 +85,24 @@ export const MessageTree = ({
     dataKey,
     ...rest
   }: {
-    rowData?: Message & { value: number };
+    rowData?: Message;
     dataKey: keyof Message;
   }) => {
     if (rowData) {
       const classNames = ["tree-row"];
-      if (rowData.value === selectedMessageId) {
+      if (rowData.msg_id === selectedMessageId) {
         classNames.push(
           isFocused
             ? "tree-row--highlighted"
             : "tree-row--highlighted--unfocussed",
         );
       }
+      if (!MessageIsRead(rowData.type_id)) {
+        classNames.push("unread-message-row");
+      }
       return (
         <Cell className={classNames.join(" ")} rowData={rowData} {...rest}>
-          {MessageIsRead(rowData.type_id) ? (
-            rowData[dataKey]
-          ) : (
-            <strong>{rowData[dataKey]}</strong>
-          )}
+          {rowData[dataKey]}
         </Cell>
       );
     }
@@ -103,20 +114,20 @@ export const MessageTree = ({
         sortColumn={sortColumn}
         sortType={sortType}
         onSortColumn={handleSortColumn}
-        isTree
+        isTree={useThreads}
         virtualized
         defaultExpandAllRows={false}
         cellBordered
-        rowKey="value"
+        rowKey="msg_id"
         data={useSortedData<TreeNode>(data, {
           key: sortColumn,
           direction: sortType,
         })}
         fillHeight
         shouldUpdateScroll={false}
-        onRowClick={({ value }) => {
-          setSelectedMessageId(Number(value));
-          onSelectedMessageChanged(Number(value));
+        onRowClick={({ msg_id }) => {
+          setSelectedMessageId(Number(msg_id));
+          onSelectedMessageChanged(Number(msg_id));
           // Focus the container when a row is clicked
           tableContainerRef.current?.focus();
         }}
@@ -125,7 +136,7 @@ export const MessageTree = ({
           <HeaderCell>Subject</HeaderCell>
           <MessageCell dataKey="subject" />
         </Column>
-        <Column flexGrow={1} sortable>
+        <Column width={150} sortable>
           <HeaderCell>From</HeaderCell>
           <MessageCell dataKey="from" />
         </Column>

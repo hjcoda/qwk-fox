@@ -17,16 +17,18 @@ export const MessageIsRead = (messageStatus: MessageStatusEnum) =>
   ReadMessageTypes.includes(messageStatus);
 
 export const getReadMessageStatus = (messageStatus: MessageStatusEnum) => {
-  const readStatusLookup: Partial<Record<MessageStatusEnum, MessageStatusEnum>>
-    = {
-      [MessageStatusEnum.PublicUnread]: MessageStatusEnum.PublicRead,
-      [MessageStatusEnum.PrivateUnread]: MessageStatusEnum.PrivateRead,
-      [MessageStatusEnum.CommentToSysopUnread]:
-        MessageStatusEnum.CommentToSysopRead,
-      [MessageStatusEnum.PasswordProtectedUnread]:
-        MessageStatusEnum.PasswordProtectedRead,
-      [MessageStatusEnum.GroupPasswordUnread]: MessageStatusEnum.GroupPasswordRead,
-    };
+  const readStatusLookup: Partial<
+    Record<MessageStatusEnum, MessageStatusEnum>
+  > = {
+    [MessageStatusEnum.PublicUnread]: MessageStatusEnum.PublicRead,
+    [MessageStatusEnum.PrivateUnread]: MessageStatusEnum.PrivateRead,
+    [MessageStatusEnum.CommentToSysopUnread]:
+      MessageStatusEnum.CommentToSysopRead,
+    [MessageStatusEnum.PasswordProtectedUnread]:
+      MessageStatusEnum.PasswordProtectedRead,
+    [MessageStatusEnum.GroupPasswordUnread]:
+      MessageStatusEnum.GroupPasswordRead,
+  };
 
   return readStatusLookup[messageStatus] ?? messageStatus;
 };
@@ -39,7 +41,6 @@ export const buildMessageTree = (messages: Message[]): TreeNode[] => {
   messages.forEach((message) => {
     nodeMap.set(message.msg_id, {
       ...message,
-      value: message.msg_id,
     });
   });
 
@@ -75,4 +76,16 @@ export const buildMessageTree = (messages: Message[]): TreeNode[] => {
   });
 
   return roots;
+};
+
+export const filterMessages = (
+  messages: Message[],
+  options: { hideRead: boolean },
+): Message[] => {
+  const { hideRead } = options;
+  if (hideRead) {
+    return messages.filter((m) => !MessageIsRead(m.type_id));
+  }
+
+  return messages;
 };

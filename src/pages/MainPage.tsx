@@ -162,7 +162,10 @@ export const MainPage = ({
             resizable={true}
           >
             <Pane className="expand-contents" defaultSize="35%">
-              <GroupBox className={"padded"} label={"Conferences"}>
+              <GroupBox
+                className={"padded expand-contents"}
+                label={"Conferences"}
+              >
                 <ConferenceList
                   bbsId={bbsId ?? ""}
                   hideRead={appSettings.hideRead}
@@ -173,11 +176,11 @@ export const MainPage = ({
             </Pane>
             <Pane className="expand-contents">
               <GroupBox className={"padded expand-contents"} label={"Messages"}>
-                {appSettings.showThreads ? (
-                  <MessageTree {...messageCollectionProps} />
-                ) : (
-                  <MessageList {...messageCollectionProps} />
-                )}
+                <MessageTree
+                  {...messageCollectionProps}
+                  useThreads={appSettings.showThreads}
+                  hideRead={appSettings.hideRead}
+                />
               </GroupBox>
             </Pane>
           </SplitPane>
