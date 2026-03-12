@@ -1,4 +1,4 @@
-import { Table } from "rsuite";
+import { SortType, Table } from "rsuite";
 import { Message } from "../data/DTO";
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
 import { buildMessageTree, MessageIsRead } from "../data/MessageUtils";
@@ -9,6 +9,7 @@ import "rsuite/dist/rsuite.css";
 import "./MessageTree.css";
 import { useEffect, useRef, useState } from "react";
 import { Frame } from "react95";
+import { useSortedData } from "../hooks/useSortedData";
 
 export const MessageTree = ({
   messages,
@@ -17,12 +18,23 @@ export const MessageTree = ({
   messages: Message[] | null;
   onSelectedMessageChanged: (message_id: number) => void;
 }) => {
+  const [sortColumn, setSortColumn] = useState<string | undefined>();
+  const [sortType, setSortType] = useState<SortType | undefined>();
   const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
     null,
   );
   const data: TreeNode[] = messages ? buildMessageTree(messages) : [];
+
   const [isFocused, setIsFocused] = useState(false);
   const tableContainerRef = useRef<HTMLTableRowElement | null>(null);
+
+  const handleSortColumn = (
+    sortColumn: string | undefined,
+    sortType: SortType | undefined,
+  ) => {
+    setSortColumn(sortColumn);
+    setSortType(sortType);
+  };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -88,12 +100,22 @@ export const MessageTree = ({
   return (
     <Frame variant="field" ref={tableContainerRef} style={{ width: "100%" }}>
       <Table
+        sortColumn={sortColumn}
+        sortType={sortType}
+        onSortColumn={handleSortColumn}
         isTree
         virtualized
         defaultExpandAllRows={false}
         cellBordered
         rowKey="value"
-        data={data}
+        data={
+          sortColumn && sortType
+            ? useSortedData<TreeNode>(data, {
+                key: sortColumn,
+                direction: sortType,
+              })
+            : data
+        }
         fillHeight
         shouldUpdateScroll={false}
         onRowClick={({ value }) => {
