@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Conference } from "../data/DTO";
 import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
@@ -15,10 +15,12 @@ type ConferenceDisplay = {
 
 export const ConferenceList = memo(
   ({
+    bbsId,
     conferences,
     hideRead,
     onSelectedConferenceChanged,
   }: {
+    bbsId: string | null;
     conferences: Conference[] | null;
     hideRead: boolean;
     onSelectedConferenceChanged: (index: number) => void;
@@ -26,6 +28,9 @@ export const ConferenceList = memo(
     const [isFocused, setIsFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState<number>();
 
+    useEffect(() => {
+      setSelectedIndex(undefined);
+    }, [bbsId]);
     const data = useMemo(() => {
       return (
         conferences

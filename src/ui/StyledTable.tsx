@@ -56,6 +56,7 @@ export const StyledTable = <
   return (
     <Frame variant="field" ref={tableContainerRef} style={{ width: "100%" }}>
       <Table
+        locale={{ emptyMessage: "" }}
         fillHeight
         onRowClick={(row) => {
           const value = row[props.rowKey];

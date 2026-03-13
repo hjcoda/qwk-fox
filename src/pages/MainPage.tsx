@@ -46,6 +46,34 @@ export const MainPage = ({
     setLastUpdateTimeMessages(Date.now());
   });
 
+  async function getMessages() {
+    if (bbsId !== null && conferenceId !== null) {
+      try {
+        setMessages(
+          await invoke<Message[]>("get_messages", { bbsId, conferenceId }),
+        );
+      } catch (err) {
+        console.error("Error getting messages from DB:", err);
+        alert("Error getting messages from DB: " + err);
+      }
+    } else {
+      setMessages([]);
+    }
+  }
+
+  async function getConferences() {
+    if (bbsId !== null) {
+      try {
+        setConferences(
+          await invoke<Conference[]>("get_conferences", { bbsId }),
+        );
+      } catch (err) {
+        console.error("Error getting conferences from DB:", err);
+        alert("Error getting conferences from DB: " + err);
+      }
+    }
+  }
+
   useEffect(() => {
     getConferences();
   }, [servers, lastUpdateTimeMessages, bbsId]);
@@ -58,7 +86,6 @@ export const MainPage = ({
     try {
       console.log(`Updating message status`);
       if (bbsId !== null) {
-        // Call backend to parse the file
         await invoke<Conference[]>("update_messages_read_status", {
           payload,
         });
@@ -66,34 +93,6 @@ export const MainPage = ({
     } catch (err) {
       console.error("Error marking messages status:", err);
       alert("Error marking messages status: " + err);
-    }
-  }
-
-  async function getMessages() {
-    try {
-      if (bbsId !== null && conferenceId !== null) {
-        // Call backend to parse the file
-        setMessages(
-          await invoke<Message[]>("get_messages", { bbsId, conferenceId }),
-        );
-      }
-    } catch (err) {
-      console.error("Error getting messages from DB:", err);
-      alert("Error getting messages from DB: " + err);
-    }
-  }
-
-  async function getConferences() {
-    try {
-      if (bbsId !== null) {
-        // Call backend to parse the file
-        setConferences(
-          await invoke<Conference[]>("get_conferences", { bbsId }),
-        );
-      }
-    } catch (err) {
-      console.error("Error getting conferences from DB:", err);
-      alert("Error getting conferences from DB: " + err);
     }
   }
 
@@ -132,12 +131,6 @@ export const MainPage = ({
     setMessage(message);
   };
 
-  const messageCollectionProps = {
-    hideRead: appSettings.hideRead,
-    messages,
-    onSelectedMessageChanged,
-  };
-
   return (
     <div className="main-page">
       <GroupBox className={"padded"} label={"Servers"}>
@@ -166,6 +159,7 @@ export const MainPage = ({
                 label={"Conferences"}
               >
                 <ConferenceList
+                  bbsId={bbsId}
                   hideRead={appSettings.hideRead}
                   conferences={conferences}
                   onSelectedConferenceChanged={onSelectedConferenceChanged}
@@ -175,9 +169,10 @@ export const MainPage = ({
             <Pane className="expand-contents">
               <GroupBox className={"padded expand-contents"} label={"Messages"}>
                 <MessageTree
-                  {...messageCollectionProps}
-                  useThreads={appSettings.showThreads}
                   hideRead={appSettings.hideRead}
+                  messages={messages}
+                  onSelectedMessageChanged={onSelectedMessageChanged}
+                  useThreads={appSettings.showThreads}
                 />
               </GroupBox>
             </Pane>
