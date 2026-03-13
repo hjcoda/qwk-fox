@@ -153,14 +153,14 @@ export const MainPage = ({
         dividerClassName={"v-divider"}
         resizable={true}
       >
-        <Pane>
+        <Pane defaultSize={"30%"}>
           <SplitPane
             direction="horizontal"
             dividerSize={5}
             dividerClassName={"h-divider"}
             resizable={true}
           >
-            <Pane className="expand-contents" defaultSize="35%">
+            <Pane className="expand-contents" defaultSize="45%">
               <GroupBox
                 className={"padded expand-contents"}
                 label={"Conferences"}

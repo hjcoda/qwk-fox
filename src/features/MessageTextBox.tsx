@@ -65,9 +65,9 @@ export const MessageTextBox = ({
 
   useEffect(() => {
     if (scrollRef.current) {
-      console.log('Scroll height:', scrollRef.current.scrollTop);
+      console.log("Scroll height:", scrollRef.current.scrollTop);
       scrollRef.current.scrollTo({ top: 0 });
-      console.log('Scroll height:', scrollRef.current.scrollTop);
+      console.log("Scroll height:", scrollRef.current.scrollTop);
     }
   }, [messageText]);
 
@@ -77,7 +77,8 @@ export const MessageTextBox = ({
       <Frame
         ref={scrollRef}
         className="message-box-frame"
-        variant="field">
+        variant={message ? "field" : "status"}
+      >
         <div className="message-content-scroll">
           <pre className={"message-text"}>{messageText}</pre>
         </div>

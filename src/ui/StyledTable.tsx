@@ -1,15 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Frame } from "react95";
 import {
   RowDataType,
   RowKeyType,
-  SortType,
   Table,
   TableInstance,
   TableProps,
 } from "rsuite";
-
-import { useSortedData } from "../hooks/useSortedData";
 
 export const StyledTable = <
   Row extends RowDataType<any>,
@@ -22,18 +19,7 @@ export const StyledTable = <
       rowKey: string;
     },
 ) => {
-  const [sortColumn, setSortColumn] = useState<string | undefined>();
-  const [sortType, setSortType] = useState<SortType | undefined>();
-
   const tableContainerRef = useRef<HTMLTableRowElement | null>(null);
-
-  const handleSortColumn = (
-    sortColumn: string | undefined,
-    sortType: SortType | undefined,
-  ) => {
-    setSortColumn(sortColumn);
-    setSortType(sortType);
-  };
 
   const handleFocus = () => {
     props.onFocusUpdate(true);
@@ -70,9 +56,6 @@ export const StyledTable = <
   return (
     <Frame variant="field" ref={tableContainerRef} style={{ width: "100%" }}>
       <Table
-        sortColumn={sortColumn}
-        sortType={sortType}
-        onSortColumn={handleSortColumn}
         fillHeight
         onRowClick={(row) => {
           const value = row[props.rowKey];
@@ -80,10 +63,6 @@ export const StyledTable = <
           // Focus the container when a row is clicked
           tableContainerRef.current?.focus();
         }}
-        data={useSortedData<Row>(props.data, {
-          key: sortColumn,
-          direction: sortType,
-        })}
         {...props}
       />
     </Frame>
