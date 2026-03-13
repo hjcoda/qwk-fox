@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { ScrollView } from "react95";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Frame } from "react95";
 import { Message } from "../data/DTO";
 import { CP437_TO_UNICODE } from "../ui/CP437/Mapping";
 import { extractMessageExtensions } from "../ui/CP437/MessageUtils";
@@ -15,6 +15,8 @@ export const MessageTextBox = ({
 }: {
   message: Message | null;
 }): React.ReactElement => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const base64DecodeUnicode = (str: string): string => {
     // Decode Base64 to binary string
     const binary = atob(str);
@@ -61,12 +63,25 @@ export const MessageTextBox = ({
   const classNames = ["message-box-container"];
   !message && classNames.push("disabled");
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      console.log('Scroll height:', scrollRef.current.scrollTop);
+      scrollRef.current.scrollTo({ top: 0 });
+      console.log('Scroll height:', scrollRef.current.scrollTop);
+    }
+  }, [messageText]);
+
   return (
     <div className={classNames.join(" ")}>
       <MessageDetailSlug message={message} />
-      <ScrollView className="message-content-scroll">
-        <pre className={"message-text"}>{messageText}</pre>
-      </ScrollView>
+      <Frame
+        ref={scrollRef}
+        className="message-box-frame"
+        variant="field">
+        <div className="message-content-scroll">
+          <pre className={"message-text"}>{messageText}</pre>
+        </div>
+      </Frame>
     </div>
   );
 };

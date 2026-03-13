@@ -6,6 +6,11 @@
   overflow: hidden;
 }
 
+.message-box-frame {
+  overflow: auto;
+  height: 100%;
+}
+
 .message-box_text {
   background: black;
   color: white;
@@ -13,9 +18,12 @@
 }
 
 .message-content-scroll {
-  flex: 1 1 auto; /* Take remaining space */
-  overflow-y: auto; /* Enable vertical scrolling */
-  min-height: 0; /* Critical for Firefox/older browsers */
+  flex: 1 1 auto;
+  /* Take remaining space */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  min-height: 0;
+  /* Critical for Firefox/older browsers */
 }
 
 .message-text {
