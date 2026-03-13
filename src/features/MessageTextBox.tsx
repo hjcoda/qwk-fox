@@ -65,9 +65,7 @@ export const MessageTextBox = ({
 
   useEffect(() => {
     if (scrollRef.current) {
-      console.log("Scroll height:", scrollRef.current.scrollTop);
       scrollRef.current.scrollTo({ top: 0 });
-      console.log("Scroll height:", scrollRef.current.scrollTop);
     }
   }, [messageText]);
 

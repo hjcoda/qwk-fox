@@ -84,7 +84,6 @@ export const MainPage = ({
 
   async function updateMessagesStatus(payload: UpdateMessagesPayload) {
     try {
-      console.log(`Updating message status`);
       if (bbsId !== null) {
         await invoke<Conference[]>("update_messages_read_status", {
           payload,
