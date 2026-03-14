@@ -1,5 +1,6 @@
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
 import { Message, MessageStatusEnum } from "./DTO";
+import { formatDate } from "./DateTimeFormat";
 
 const ReadMessageTypes = [
   MessageStatusEnum.PublicRead,
@@ -88,4 +89,19 @@ export const filterMessages = (
   }
 
   return messages;
+};
+
+export const enhanceMessages = (messages: Message[]): Message[] => {
+  return messages.map((m) => {
+    const enhanced = { ...m, subject: m.header?.subject ?? m.subject };
+    if (m.header) {
+      enhanced.date = formatDate(
+        new Date(m.header.when_written ?? enhanced.date),
+      );
+    } else {
+      enhanced.date = formatDate(new Date(m.date));
+    }
+
+    return enhanced;
+  });
 };

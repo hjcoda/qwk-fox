@@ -18,6 +18,7 @@
 
 # Aesthetic
 
+- Expand hierarchy when clicking on new message
 - Try platinum skin?
 - Optionally remove quoted text from messages.
 - Settings dialog

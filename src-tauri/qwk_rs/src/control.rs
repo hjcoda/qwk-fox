@@ -5,7 +5,7 @@ use std::io;
 use std::io::{BufRead, BufReader};
 use zip::ZipArchive;
 
-/// A single BBS node which created a QWK packet
+/// A single BBS node which created a QWK packet.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Server {
     pub bbs_id: String,
@@ -17,7 +17,7 @@ pub struct Server {
     pub user_name: String,
 }
 
-/// A conference category
+/// A conference category within a QWK packet.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Conference {
     pub id: u32,
@@ -25,6 +25,7 @@ pub struct Conference {
 }
 
 impl Parser {
+    /// Parse `CONTROL.DAT` and populate server + conference metadata.
     pub fn read_control(&mut self, archive: &mut ZipArchive<File>) -> Result<Server, io::Error> {
         let control_file = archive.by_path("CONTROL.DAT")?;
         let reader = BufReader::new(control_file);

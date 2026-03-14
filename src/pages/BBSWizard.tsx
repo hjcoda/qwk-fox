@@ -15,6 +15,7 @@ export const BBSWizard = ({
 }) => {
   return (
     <>
+      <h1>BBS Wizard</h1>
       <p>{`It looks like you haven't set up any BBS subcriptions yet.`}</p>
       <p>{`To get started, import a QWK packet directly from the 'File' menu`}</p>
       {importProgress && (

@@ -5,68 +5,54 @@ use std::io;
 use std::io::{BufReader, Read};
 use zip::ZipArchive;
 
+use crate::synchronet::parse_timestamp_with_hex;
 use crate::Parser;
 
-/// Syncronet header which augments messages with extra data
+/// Synchronet header which augments messages with extra data.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Header {
-    section: u32,
-    utf8: Option<bool>,
-    format: Option<String>,
-    message_ids: Vec<String>,
-    in_reply_tos: Vec<String>,
-    when_writtens: Vec<TimestampWithHex>,
-    when_importeds: Vec<TimestampWithHex>,
-    when_exporteds: Vec<TimestampWithHex>,
-    exported_froms: Vec<String>,
-    sender: Option<String>,
-    sender_net_addr: Option<String>,
-    sender_ip_addr: Option<String>,
-    sender_host_name: Option<String>,
-    sender_protocol: Option<String>,
-    organization: Option<String>,
-    reply_to: Option<String>,
-    subject: Option<String>,
-    to: Option<String>,
-    to_net_addr: Option<String>,
-    x_ftn_area: Option<String>,
-    x_ftn_seen_by: Option<String>,
-    x_ftn_path: Option<String>,
-    x_ftn_msgid: Option<String>,
-    x_ftn_reply: Option<String>,
-    x_ftn_pid: Option<String>,
-    x_ftn_flags: Option<String>,
-    x_ftn_tid: Option<String>,
-    x_ftn_chrs: Option<String>,
-    x_ftn_kludge: Option<String>,
-    editor: Option<String>,
-    columns: Option<u32>,
-    tags: Option<String>,
-    path: Option<String>,
-    newsgroups: Option<String>,
-    conference: Option<u32>,
-    other_fields: HashMap<String, Vec<String>>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct TimestampWithHex {
-    timestamp: String,
-    hex: String,
-}
-
-fn parse_timestamp_with_hex(input: &str) -> Option<TimestampWithHex> {
-    let parts: Vec<&str> = input.split_whitespace().collect();
-    if parts.len() >= 2 {
-        Some(TimestampWithHex {
-            timestamp: parts[0].to_string(),
-            hex: parts[1].to_string(),
-        })
-    } else {
-        None
-    }
+    pub section: u32,
+    pub section_bytes: Option<u32>,
+    pub section_blocks: Option<u32>,
+    pub utf8: Option<bool>,
+    pub format: Option<String>,
+    pub message_ids: Vec<String>,
+    pub in_reply_to: Option<String>,
+    pub when_written: Option<String>,
+    pub when_imported: Option<String>,
+    pub when_exported: Option<String>,
+    pub exported_from: Option<String>,
+    pub sender: Option<String>,
+    pub sender_net_addr: Option<String>,
+    pub sender_ip_addr: Option<String>,
+    pub sender_host_name: Option<String>,
+    pub sender_protocol: Option<String>,
+    pub organization: Option<String>,
+    pub reply_to: Option<String>,
+    pub subject: Option<String>,
+    pub to: Option<String>,
+    pub to_net_addr: Option<String>,
+    pub x_ftn_area: Option<String>,
+    pub x_ftn_seen_by: Option<String>,
+    pub x_ftn_path: Option<String>,
+    pub x_ftn_msgid: Option<String>,
+    pub x_ftn_reply: Option<String>,
+    pub x_ftn_pid: Option<String>,
+    pub x_ftn_flags: Option<String>,
+    pub x_ftn_tid: Option<String>,
+    pub x_ftn_chrs: Option<String>,
+    pub x_ftn_kludge: Option<String>,
+    pub editor: Option<String>,
+    pub columns: Option<u32>,
+    pub tags: Option<String>,
+    pub path: Option<String>,
+    pub newsgroups: Option<String>,
+    pub conference: Option<u32>,
+    pub other_fields: HashMap<String, Vec<String>>,
 }
 
 impl Parser {
+    /// Parse a single header line into the current message header.
     fn parse_line_into_message(&mut self, line: &str, msg: &mut Header) {
         let (key, value) = if line.contains('=') {
             let parts: Vec<&str> = line.splitn(2, '=').collect();
@@ -84,25 +70,25 @@ impl Parser {
             "Message-ID" => msg
                 .message_ids
                 .push(value.trim_matches('<').trim_matches('>').to_string()),
-            "In-Reply-To" => msg
-                .in_reply_tos
-                .push(value.trim_matches('<').trim_matches('>').to_string()),
+            "In-Reply-To" => {
+                msg.in_reply_to = Some(value.trim_matches('<').trim_matches('>').to_string())
+            }
             "WhenWritten" => {
                 if let Some(ts) = parse_timestamp_with_hex(value) {
-                    msg.when_writtens.push(ts);
+                    msg.when_written = Some(ts);
                 }
             }
             "WhenImported" => {
                 if let Some(ts) = parse_timestamp_with_hex(value) {
-                    msg.when_importeds.push(ts);
+                    msg.when_imported = Some(ts);
                 }
             }
             "WhenExported" => {
                 if let Some(ts) = parse_timestamp_with_hex(value) {
-                    msg.when_exporteds.push(ts);
+                    msg.when_exported = Some(ts);
                 }
             }
-            "ExportedFrom" => msg.exported_froms.push(value.to_string()),
+            "ExportedFrom" => msg.exported_from = Some(value.to_string()),
             "Sender" => msg.sender = Some(value.to_string()),
             "SenderNetAddr" => msg.sender_net_addr = Some(value.to_string()),
             "SenderIpAddr" => msg.sender_ip_addr = Some(value.to_string()),
@@ -137,6 +123,7 @@ impl Parser {
         }
     }
 
+    /// Parse the contents of `HEADERS.DAT` into header records.
     fn parse_messages(&mut self, content: &str) {
         let mut current_message: Option<Header> = None;
         let mut in_section = false;
@@ -158,9 +145,21 @@ impl Parser {
                 }
 
                 // Start a new message
-                let section_num = line[1..line.len() - 1].parse::<u32>().unwrap_or(0);
+                let section_text = line[1..line.len() - 1].trim();
+                let section_num = if let Some(hex) = section_text.strip_prefix("0x") {
+                    u32::from_str_radix(hex, 16).unwrap_or(0)
+                } else if section_text
+                    .chars()
+                    .any(|c| c.is_ascii_hexdigit() && c.is_ascii_alphabetic())
+                {
+                    u32::from_str_radix(section_text, 16).unwrap_or(0)
+                } else {
+                    section_text.parse::<u32>().unwrap_or(0)
+                };
                 current_message = Some(Header {
                     section: section_num,
+                    section_bytes: None,
+                    section_blocks: None,
                     ..Default::default()
                 });
                 in_section = true;
@@ -184,17 +183,76 @@ impl Parser {
         }
     }
 
+    /// Parse `HEADERS.DAT` (if present) and populate header records.
     pub fn read_headers(&mut self, archive: &mut ZipArchive<File>) -> Result<(), io::Error> {
+        println!("Looking for headers file");
         match archive.by_path("HEADERS.DAT") {
             Ok(header_file) => {
-                let mut contents = String::new();
+                println!("Found headers file");
+                let mut contents = Vec::new();
                 let mut reader = BufReader::new(header_file);
-                reader.read_to_string(&mut contents)?;
+                if let Err(err) = reader.read_to_end(&mut contents) {
+                    eprintln!("Failed to read HEADERS.DAT: {}", err);
+                    return Err(err);
+                }
+                println!("Read headers file");
+                let contents = String::from_utf8_lossy(&contents);
                 self.parse_messages(&contents);
             }
-            Err(_) => {}
+            Err(err) => {
+                eprintln!("Failed to open HEADERS.DAT: {}", err);
+                return Err(io::Error::new(io::ErrorKind::Other, err));
+            }
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Header;
+    use crate::Parser;
+    use std::io::Cursor;
+    use std::io::Write;
+    use zip::write::FileOptions;
+    use zip::ZipArchive;
+
+    fn zip_with_headers(contents: &str) -> ZipArchive<Cursor<Vec<u8>>> {
+        let mut buffer = Cursor::new(Vec::new());
+        {
+            let mut writer = zip::ZipWriter::new(&mut buffer);
+            writer
+                .start_file("HEADERS.DAT", FileOptions::default())
+                .expect("failed to start file");
+            writer
+                .write_all(contents.as_bytes())
+                .expect("failed to write headers");
+            writer.finish().expect("failed to finish zip");
+        }
+        buffer.set_position(0);
+        ZipArchive::new(buffer).expect("failed to open zip archive")
+    }
+
+    #[test]
+    fn parses_headers_and_timestamps() {
+        let headers = "[1A]\n\
+WhenWritten:  20260305072622-0800  41e0\n\
+Message-ID: <abc123>\n\
+Sender: Test Sender\n\
+Subject: Hello\n\
+To: Receiver\n";
+
+        let mut archive = zip_with_headers(headers);
+        let mut parser = Parser::default();
+        parser.read_headers(&mut archive).expect("read headers");
+
+        let header = parser.headers.get("26").expect("header should be present");
+        assert_eq!(header.section, 26);
+        assert_eq!(header.message_ids, vec!["abc123".to_string()]);
+        assert_eq!(header.sender.as_deref(), Some("Test Sender"));
+        assert_eq!(header.subject.as_deref(), Some("Hello"));
+        assert_eq!(header.to.as_deref(), Some("Receiver"));
+        assert_eq!(header.when_written.as_deref(), Some("2026-03-05 15:26:22"));
     }
 }
