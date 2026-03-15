@@ -17,12 +17,12 @@ export const ConferenceList = memo(
   ({
     bbsId,
     conferences,
-    hideRead,
+    hideEmptyConferences,
     onSelectedConferenceChanged,
   }: {
     bbsId: string | null;
     conferences: Conference[] | null;
-    hideRead: boolean;
+    hideEmptyConferences: boolean;
     onSelectedConferenceChanged: (index: number) => void;
   }): React.ReactElement => {
     const [isFocused, setIsFocused] = useState(false);
@@ -34,7 +34,7 @@ export const ConferenceList = memo(
     const data = useMemo(() => {
       return (
         conferences
-          ?.filter((c) => !hideRead || c.unread_count > 0)
+          ?.filter((c) => !hideEmptyConferences || c.message_count > 0)
           .map((c) => {
             return {
               index: c.id,
@@ -46,7 +46,7 @@ export const ConferenceList = memo(
             };
           }) ?? []
       );
-    }, [conferences, hideRead]);
+    }, [conferences, hideEmptyConferences]);
 
     const StyledCell = useCallback(
       ({

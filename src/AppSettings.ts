@@ -1,4 +1,9 @@
+export type ViewSettings = {
+  hideReadMessages: boolean;
+  showMessageThreads: boolean;
+  hideEmptyConferences: boolean;
+};
+
 export type AppSettings = {
-  hideRead: boolean;
-  showThreads: boolean;
+  viewSettings: ViewSettings;
 };

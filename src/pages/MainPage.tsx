@@ -161,7 +161,9 @@ export const MainPage = ({
               >
                 <ConferenceList
                   bbsId={bbsId}
-                  hideRead={appSettings.hideRead}
+                  hideEmptyConferences={
+                    appSettings.viewSettings.hideEmptyConferences
+                  }
                   conferences={conferences}
                   onSelectedConferenceChanged={onSelectedConferenceChanged}
                 />
@@ -170,10 +172,10 @@ export const MainPage = ({
             <Pane className="expand-contents">
               <GroupBox className={"padded expand-contents"} label={"Messages"}>
                 <MessageTree
-                  hideRead={appSettings.hideRead}
+                  hideRead={appSettings.viewSettings.hideReadMessages}
                   messages={messages}
                   onSelectedMessageChanged={onSelectedMessageChanged}
-                  useThreads={appSettings.showThreads}
+                  useThreads={appSettings.viewSettings.showMessageThreads}
                 />
               </GroupBox>
             </Pane>

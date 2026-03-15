@@ -19,6 +19,7 @@ import original from "react95/dist/themes/original";
 // original Windows95 font (optionally)
 import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
 import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
+import { ViewSettings } from "./AppSettings";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -42,20 +43,16 @@ const GlobalStyles = createGlobalStyle`
 const macOS = navigator.userAgent.includes("Macintosh");
 
 interface MenuActions {
-  isHideReadEnabled: () => boolean;
-  isShowThreadsEnabled: () => boolean;
   importQWKFileToDB: () => void;
-  toggleHideRead: () => void;
-  toggleShowThreads: () => void;
+  viewSettings: () => ViewSettings;
+  updateViewSettings: (viewSettings: ViewSettings) => void;
   aboutDialog: () => void;
 }
 
 async function create({
-  isHideReadEnabled,
-  isShowThreadsEnabled,
   importQWKFileToDB,
-  toggleHideRead,
-  toggleShowThreads,
+  viewSettings,
+  updateViewSettings,
   aboutDialog,
 }: MenuActions) {
   const fileMenu = await Submenu.new({
@@ -81,19 +78,39 @@ async function create({
     text: "View",
     items: [
       {
-        checked: isHideReadEnabled(),
+        checked: viewSettings().hideReadMessages,
         text: "Hide Read Messages",
         enabled: true,
         action: () => {
-          toggleHideRead();
+          const settings = viewSettings();
+          updateViewSettings({
+            ...settings,
+            hideReadMessages: !settings.hideReadMessages,
+          });
         },
       },
       {
-        checked: isShowThreadsEnabled(),
+        checked: viewSettings().showMessageThreads,
         text: "Show Message Threads",
         enabled: true,
         action: () => {
-          toggleShowThreads();
+          const settings = viewSettings();
+          updateViewSettings({
+            ...settings,
+            showMessageThreads: !settings.showMessageThreads,
+          });
+        },
+      },
+      {
+        checked: viewSettings().hideEmptyConferences,
+        text: "Hide Empty Conferences",
+        enabled: true,
+        action: () => {
+          const settings = viewSettings();
+          updateViewSettings({
+            ...settings,
+            hideEmptyConferences: !settings.hideEmptyConferences,
+          });
         },
       },
     ],
@@ -120,8 +137,11 @@ async function create({
 function App() {
   const [servers, setServers] = useState<Server[]>([]);
   const [lastImportTime, setLastImportTime] = useState<number>();
-  const [hideRead, setHideRead] = useState<boolean>(false);
-  const [showThreads, setShowThreads] = useState<boolean>(true);
+  const [viewSettings, setViewSettings] = useState<ViewSettings>({
+    hideEmptyConferences: false,
+    hideReadMessages: false,
+    showMessageThreads: true,
+  });
   const [importProgress, setImportProgress] = useState<{
     stage: string;
     current: number;
@@ -166,14 +186,13 @@ function App() {
 
   useEffect(() => {
     create({
-      isHideReadEnabled: () => hideRead,
-      isShowThreadsEnabled: () => showThreads,
       importQWKFileToDB: () => importQWKFileToDB(),
-      toggleHideRead: () => setHideRead(!hideRead),
-      toggleShowThreads: () => setShowThreads(!showThreads),
+      viewSettings: () => viewSettings,
+      updateViewSettings: (viewSettings: ViewSettings) =>
+        setViewSettings(viewSettings),
       aboutDialog: () => aboutDialog(),
     });
-  }, [hideRead, showThreads]);
+  }, [viewSettings]);
 
   async function importQWKFileToDB() {
     const fileExtensions = [];
@@ -225,8 +244,7 @@ function App() {
           ) : (
             <MainPage
               appSettings={{
-                hideRead,
-                showThreads,
+                viewSettings,
               }}
               servers={servers}
               importProgress={importProgress}
