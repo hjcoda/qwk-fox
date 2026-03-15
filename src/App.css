@@ -33,3 +33,47 @@ main {
   display: flex;
   flex-direction: column;
 }
+
+.bold {
+  font-weight: 600;
+}
+
+.rs-table-cell-content {
+  user-select: none;
+  cursor: default;
+}
+
+.rs-table-row-header .rs-table-cell-content {
+  background-color: var(--table-header-bg, #c6c6c6);
+  font-size: initial;
+  color: var(--table-header-text, black);
+}
+
+.row--highlighted {
+  background-color: var(--table-highlight-bg, #060084) !important;
+  color: var(--table-highlight-text, white) !important;
+  border-top: dotted 2px var(--table-highlight-border, white) !important;
+  border-bottom: dotted 2px var(--table-highlight-border, white) !important;
+}
+
+.row--highlighted:first-child {
+  border-left: dotted 2px var(--table-highlight-border, white) !important;
+}
+
+.row--highlighted:last-child {
+  border-right: dotted 2px var(--table-highlight-border, white) !important;
+}
+
+.row--highlighted--unfocussed {
+  background-color: white !important;
+  border-top: solid 2px var(--table-highlight-unfocused-border, #060084) !important;
+  border-bottom: solid 2px var(--table-highlight-unfocused-border, #060084) !important;
+}
+
+.row--highlighted--unfocussed:first-child {
+  border-left: solid 2px var(--table-highlight-unfocused-border, #060084) !important;
+}
+
+.row--highlighted--unfocussed:last-child {
+  border-right: solid 2px var(--table-highlight-unfocused-border, #060084) !important;
+}

@@ -8,37 +8,18 @@ import "./App.css";
 
 import { Server } from "./data/DTO";
 
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import { useTauriEvent } from "./hooks/useTauriEvent";
 import { BBSWizard } from "./pages/BBSWizard";
 import { MainPage } from "./pages/MainPage";
 
-import { styleReset } from "react95";
 // pick a theme of your choice
+import * as themes from "react95/dist/themes";
 import original from "react95/dist/themes/original";
-// original Windows95 font (optionally)
-import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
-import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
-import { ViewSettings } from "./AppSettings";
 
-const GlobalStyles = createGlobalStyle`
-  ${styleReset}
-  @font-face {
-    font-family: 'ms_sans_serif';
-    src: url('${ms_sans_serif}') format('woff2');
-    font-weight: 400;
-    font-style: normal
-  }
-  @font-face {
-    font-family: 'ms_sans_serif';
-    src: url('${ms_sans_serif_bold}') format('woff2');
-    font-weight: bold;
-    font-style: normal
-  }
-  body {
-    font-family: 'ms_sans_serif';
-  }
-`;
+import { ViewSettings } from "./AppSettings";
+import { GlobalStyles } from "./GlobalStyles";
+import { Theme } from "react95/dist/common/themes/types";
 
 const macOS = navigator.userAgent.includes("Macintosh");
 
@@ -46,13 +27,23 @@ interface MenuActions {
   importQWKFileToDB: () => void;
   viewSettings: () => ViewSettings;
   updateViewSettings: (viewSettings: ViewSettings) => void;
+  themeName: () => string;
+  updateTheme: (themeName: string) => void;
   aboutDialog: () => void;
 }
+
+type ThemeName = Exclude<keyof typeof themes, "default">;
+
+const themeNames = Object.keys(themes).filter(
+  (name) => name !== "default" && typeof themes[name as ThemeName] === "object",
+);
 
 async function create({
   importQWKFileToDB,
   viewSettings,
   updateViewSettings,
+  themeName,
+  updateTheme,
   aboutDialog,
 }: MenuActions) {
   const fileMenu = await Submenu.new({
@@ -113,6 +104,15 @@ async function create({
           });
         },
       },
+      {
+        text: "Theme",
+        items: themeNames.map((name) => ({
+          text: name,
+          checked: themeName() === name,
+          enabled: true,
+          action: () => updateTheme(name),
+        })),
+      },
     ],
   });
   const helpMenu = await Submenu.new({
@@ -148,6 +148,7 @@ function App() {
     total: number;
     percent: number;
   } | null>(null);
+  const [themeName, setThemeName] = useState<string>("original");
 
   useTauriEvent("import-complete", () => {
     setImportProgress(null);
@@ -190,9 +191,11 @@ function App() {
       viewSettings: () => viewSettings,
       updateViewSettings: (viewSettings: ViewSettings) =>
         setViewSettings(viewSettings),
+      themeName: () => themeName,
+      updateTheme: (themeName: string) => setThemeName(themeName),
       aboutDialog: () => aboutDialog(),
     });
-  }, [viewSettings]);
+  }, [viewSettings, themeName]);
 
   async function importQWKFileToDB() {
     const fileExtensions = [];
@@ -234,10 +237,12 @@ function App() {
     );
   }
 
+  const currentTheme: Theme =
+    (themes as Record<string, Theme>)[themeName] ?? original;
   return (
-    <main>
-      <GlobalStyles />
-      <ThemeProvider theme={original}>
+    <ThemeProvider theme={currentTheme}>
+      <main>
+        <GlobalStyles theme={currentTheme} />
         <div className="window-content">
           {servers.length === 0 ? (
             <BBSWizard importProgress={importProgress} />
@@ -251,8 +256,8 @@ function App() {
             />
           )}
         </div>
-      </ThemeProvider>
-    </main>
+      </main>
+    </ThemeProvider>
   );
 }
 

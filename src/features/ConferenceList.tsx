@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Conference } from "../data/DTO";
 import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
-import "./ConferenceList.css";
 import { StyledTable } from "../ui/StyledTable";
 import Cell from "rsuite/esm/Table/TableCell";
 
@@ -61,9 +60,7 @@ export const ConferenceList = memo(
           const classNames = ["tree-row"];
           if (rowData.id === selectedIndex) {
             classNames.push(
-              isFocused
-                ? "tree-row--highlighted"
-                : "tree-row--highlighted--unfocussed",
+              isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
             );
           }
           if (rowData.unread_count > 0) {

@@ -12,8 +12,8 @@
 }
 
 .message-box_text {
-  background: black;
-  color: white;
+  background: var(--messagebox-bg, black);
+  color: var(--messagebox-text, white);
   font-family: monospace;
 }
 

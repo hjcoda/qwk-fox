@@ -10,7 +10,6 @@ import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
 import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
-import "./MessageTree.css";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useSortedData } from "../hooks/useSortedData";
 import { StyledTable } from "../ui/StyledTable";
@@ -61,9 +60,7 @@ export const MessageTree = memo(
           const classNames = ["tree-row"];
           if (rowData.msg_id === selectedIndex) {
             classNames.push(
-              isFocused
-                ? "tree-row--highlighted"
-                : "tree-row--highlighted--unfocussed",
+              isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
             );
           }
           if (!MessageIsRead(rowData.type_id)) {
