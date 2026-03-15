@@ -70,7 +70,7 @@ export const MessageTree = memo(
           }
           return (
             <Cell className={classNames.join(" ")} rowData={rowData} {...rest}>
-              {rowData[dataKey]}
+              {String(rowData[dataKey] ?? "")}
             </Cell>
           );
         }

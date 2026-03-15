@@ -65,3 +65,38 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+  e2e-tauri-smoke:
+    runs-on: ubuntu-latest
+    needs: publish-tauri
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install dependencies (ubuntu only)
+        run: |
+          sudo apt update
+          sudo apt-get install -y libwayland-dev pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev xdg-utils
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: install frontend dependencies
+        run: npm ci
+
+      - name: install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: run Playwright web e2e
+        run: npm run test:e2e:web

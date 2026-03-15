@@ -9,7 +9,7 @@ import { IconServerList } from "../features/IconServerList";
 import { MessageTextBox } from "../features/MessageTextBox";
 import { useTauriEvent } from "../hooks/useTauriEvent";
 import { StatusBar } from "../features/StatusBar";
-import { getReadMessageStatus } from "../data/MessageUtils";
+import { enhanceMessages, getReadMessageStatus } from "../data/MessageUtils";
 import { MessageTree } from "../features/MessageTree";
 
 type UpdateMessagesPayload = {
@@ -50,7 +50,9 @@ export const MainPage = ({
     if (bbsId !== null && conferenceId !== null) {
       try {
         setMessages(
-          await invoke<Message[]>("get_messages", { bbsId, conferenceId }),
+          enhanceMessages(
+            await invoke<Message[]>("get_messages", { bbsId, conferenceId }),
+          ),
         );
       } catch (err) {
         console.error("Error getting messages from DB:", err);
