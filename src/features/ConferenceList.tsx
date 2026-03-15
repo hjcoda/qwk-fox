@@ -66,6 +66,9 @@ export const ConferenceList = memo(
                 : "tree-row--highlighted--unfocussed",
             );
           }
+          if (rowData.unread_count > 0) {
+            classNames.push("bold");
+          }
           return (
             <Cell className={classNames.join(" ")} rowData={rowData} {...rest}>
               {rowData[dataKey]}

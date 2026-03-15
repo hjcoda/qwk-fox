@@ -27,6 +27,7 @@ export const MessageTree = memo(
     messages: Message[] | null;
     onSelectedMessageChanged: (message_id: number) => void;
   }) => {
+    const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
     const [isFocused, setIsFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState<number>();
     const [sortColumn, setSortColumn] = useState<string | undefined>();
@@ -66,7 +67,7 @@ export const MessageTree = memo(
             );
           }
           if (!MessageIsRead(rowData.type_id)) {
-            classNames.push("unread-message-row");
+            classNames.push("bold");
           }
           return (
             <Cell className={classNames.join(" ")} rowData={rowData} {...rest}>
@@ -85,6 +86,7 @@ export const MessageTree = memo(
         onSortColumn={handleSortColumn}
         isTree={useThreads}
         virtualized
+        expandedRowKeys={expandedRowKeys}
         defaultExpandAllRows={false}
         cellBordered
         rowKey="msg_id"
@@ -96,6 +98,13 @@ export const MessageTree = memo(
         shouldUpdateScroll={false}
         onSelectedIndexChanged={(index) => {
           setSelectedIndex(index);
+          setExpandedRowKeys((prevKeys) => {
+            if (prevKeys.includes(index)) {
+              return prevKeys.filter((key) => key !== index);
+            } else {
+              return [...prevKeys, index];
+            }
+          });
           onSelectedMessageChanged(index);
         }}
         onFocusUpdate={(focus) => setIsFocused(focus)}
