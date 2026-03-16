@@ -28,6 +28,7 @@ export const GlobalStyles = createGlobalStyle`
     min-height: 100vh;
   }
   :root {
+    --border-light: ${({ theme }: { theme: Theme }) => theme.borderLight};
     --table-border: ${({ theme }: { theme: Theme }) => theme.borderDark};
     --table-row-border: ${({ theme }: { theme: Theme }) => theme.borderLight};
     --table-disabled: ${({ theme }: { theme: Theme }) => theme.materialText};

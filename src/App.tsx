@@ -1,7 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { Menu, Submenu } from "@tauri-apps/api/menu";
 import { message, open } from "@tauri-apps/plugin-dialog";
-import { exit } from "@tauri-apps/plugin-process";
 import { useEffect, useState } from "react";
 
 import "./App.css";
@@ -20,6 +18,8 @@ import original from "react95/dist/themes/original";
 import { ViewSettings } from "./AppSettings";
 import { GlobalStyles } from "./GlobalStyles";
 import { Theme } from "react95/dist/common/themes/types";
+import { Menu } from "./features/Menu";
+import { TitleBar } from "./features/TitleBar";
 
 const macOS = navigator.userAgent.includes("Macintosh");
 
@@ -38,107 +38,107 @@ const themeNames = Object.keys(themes).filter(
   (name) => name !== "default" && typeof themes[name as ThemeName] === "object",
 );
 
-async function create({
-  importQWKFileToDB,
-  viewSettings,
-  updateViewSettings,
-  themeName,
-  updateTheme,
-  aboutDialog,
-}: MenuActions) {
-  const fileMenu = await Submenu.new({
-    text: "File",
-    items: [
-      {
-        text: "Import...",
-        enabled: true,
-        action: () => {
-          importQWKFileToDB();
-        },
-      },
-      {
-        text: "Quit",
-        enabled: true,
-        action: () => {
-          exit(0);
-        },
-      },
-    ],
-  });
-  const viewMenu = await Submenu.new({
-    text: "View",
-    items: [
-      {
-        checked: viewSettings().hideReadMessages,
-        text: "Hide Read Messages",
-        enabled: true,
-        action: () => {
-          const settings = viewSettings();
-          updateViewSettings({
-            ...settings,
-            hideReadMessages: !settings.hideReadMessages,
-          });
-        },
-      },
-      {
-        checked: viewSettings().showMessageThreads,
-        text: "Show Message Threads",
-        enabled: true,
-        action: () => {
-          const settings = viewSettings();
-          updateViewSettings({
-            ...settings,
-            showMessageThreads: !settings.showMessageThreads,
-          });
-        },
-      },
-      {
-        checked: viewSettings().hideEmptyConferences,
-        text: "Hide Empty Conferences",
-        enabled: true,
-        action: () => {
-          const settings = viewSettings();
-          updateViewSettings({
-            ...settings,
-            hideEmptyConferences: !settings.hideEmptyConferences,
-          });
-        },
-      },
-      {
-        text: "Theme",
-        items: themeNames.map((name) => ({
-          text: name,
-          checked: themeName() === name,
-          enabled: true,
-          action: () => updateTheme(name),
-        })),
-      },
-    ],
-  });
-  const helpMenu = await Submenu.new({
-    text: "Help",
-    items: [
-      {
-        text: "About",
-        enabled: true,
-        action: () => {
-          aboutDialog();
-        },
-      },
-    ],
-  });
+// async function create({
+//   importQWKFileToDB,
+//   viewSettings,
+//   updateViewSettings,
+//   themeName,
+//   updateTheme,
+//   aboutDialog,
+// }: MenuActions) {
+//   const fileMenu = await Submenu.new({
+//     text: "File",
+//     items: [
+//       {
+//         text: "Import...",
+//         enabled: true,
+//         action: () => {
+//           importQWKFileToDB();
+//         },
+//       },
+//       {
+//         text: "Quit",
+//         enabled: true,
+//         action: () => {
+//           exit(0);
+//         },
+//       },
+//     ],
+//   });
+//   const viewMenu = await Submenu.new({
+//     text: "View",
+//     items: [
+//       {
+//         checked: viewSettings().hideReadMessages,
+//         text: "Hide Read Messages",
+//         enabled: true,
+//         action: () => {
+//           const settings = viewSettings();
+//           updateViewSettings({
+//             ...settings,
+//             hideReadMessages: !settings.hideReadMessages,
+//           });
+//         },
+//       },
+//       {
+//         checked: viewSettings().showMessageThreads,
+//         text: "Show Message Threads",
+//         enabled: true,
+//         action: () => {
+//           const settings = viewSettings();
+//           updateViewSettings({
+//             ...settings,
+//             showMessageThreads: !settings.showMessageThreads,
+//           });
+//         },
+//       },
+//       {
+//         checked: viewSettings().hideEmptyConferences,
+//         text: "Hide Empty Conferences",
+//         enabled: true,
+//         action: () => {
+//           const settings = viewSettings();
+//           updateViewSettings({
+//             ...settings,
+//             hideEmptyConferences: !settings.hideEmptyConferences,
+//           });
+//         },
+//       },
+//       {
+//         text: "Theme",
+//         items: themeNames.map((name) => ({
+//           text: name,
+//           checked: themeName() === name,
+//           enabled: true,
+//           action: () => updateTheme(name),
+//         })),
+//       },
+//     ],
+//   });
+//   const helpMenu = await Submenu.new({
+//     text: "Help",
+//     items: [
+//       {
+//         text: "About",
+//         enabled: true,
+//         action: () => {
+//           aboutDialog();
+//         },
+//       },
+//     ],
+//   });
 
-  const menu = await Menu.new({
-    items: [fileMenu, viewMenu, helpMenu],
-  });
-  await (macOS ? menu.setAsAppMenu() : menu.setAsWindowMenu());
-}
+//   const menu = await Menu.new({
+//     items: [fileMenu, viewMenu, helpMenu],
+//   });
+//   await (macOS ? menu.setAsAppMenu() : menu.setAsWindowMenu());
+// }
 
 function App() {
   const [servers, setServers] = useState<Server[]>([]);
   const [lastImportTime, setLastImportTime] = useState<number>();
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
-    hideEmptyConferences: false,
+    hideEmptyConferences: true,
     hideReadMessages: false,
     showMessageThreads: true,
   });
@@ -185,17 +185,17 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    create({
-      importQWKFileToDB: () => importQWKFileToDB(),
-      viewSettings: () => viewSettings,
-      updateViewSettings: (viewSettings: ViewSettings) =>
-        setViewSettings(viewSettings),
-      themeName: () => themeName,
-      updateTheme: (themeName: string) => setThemeName(themeName),
-      aboutDialog: () => aboutDialog(),
-    });
-  }, [viewSettings, themeName]);
+  // useEffect(() => {
+  //   create({
+  //     importQWKFileToDB: () => importQWKFileToDB(),
+  //     viewSettings: () => viewSettings,
+  //     updateViewSettings: (viewSettings: ViewSettings) =>
+  //       setViewSettings(viewSettings),
+  //     themeName: () => themeName,
+  //     updateTheme: (themeName: string) => setThemeName(themeName),
+  //     aboutDialog: () => aboutDialog(),
+  //   });
+  // }, [viewSettings, themeName]);
 
   async function importQWKFileToDB() {
     const fileExtensions = [];
@@ -241,22 +241,22 @@ function App() {
     (themes as Record<string, Theme>)[themeName] ?? original;
   return (
     <ThemeProvider theme={currentTheme}>
-      <main>
-        <GlobalStyles theme={currentTheme} />
-        <div className="window-content">
-          {servers.length === 0 ? (
-            <BBSWizard importProgress={importProgress} />
-          ) : (
-            <MainPage
-              appSettings={{
-                viewSettings,
-              }}
-              servers={servers}
-              importProgress={importProgress}
-            />
-          )}
-        </div>
-      </main>
+      <GlobalStyles theme={currentTheme} />
+      <TitleBar />
+      <Menu />
+      <div className="window-content">
+        {servers.length === 0 ? (
+          <BBSWizard importProgress={importProgress} />
+        ) : (
+          <MainPage
+            appSettings={{
+              viewSettings,
+            }}
+            servers={servers}
+            importProgress={importProgress}
+          />
+        )}
+      </div>
     </ThemeProvider>
   );
 }

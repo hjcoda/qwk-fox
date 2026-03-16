@@ -4,7 +4,7 @@
 
 .icon-chain {
   height: 90px;
-  background-color: gray;
+  background-color: var(--table-bg, gray);
   display: flex;
   flex-direction: row;
   gap: 0px;

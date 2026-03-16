@@ -12,6 +12,42 @@ type ConferenceDisplay = {
   unread_count: number;
 };
 
+const ID_Column = {
+  key: "id",
+  dataKey: "id" as keyof ConferenceDisplay,
+  label: "Id",
+  fixed: true,
+  width: 80,
+};
+
+const Title_Column = {
+  key: "title",
+  label: "Title",
+  dataKey: "title" as keyof ConferenceDisplay,
+  fixed: true,
+  flexGrow: 1,
+};
+
+const allColumns = [
+  ID_Column,
+  Title_Column,
+  {
+    key: "count",
+    label: "Count",
+    dataKey: "message_count" as keyof ConferenceDisplay,
+    width: 80,
+  },
+
+  {
+    key: "unread",
+    label: "Unread",
+    dataKey: "unread_count" as keyof ConferenceDisplay,
+    width: 80,
+  },
+];
+
+const defaultColumns = [ID_Column, Title_Column];
+
 export const ConferenceList = memo(
   ({
     bbsId,
@@ -26,6 +62,11 @@ export const ConferenceList = memo(
   }): React.ReactElement => {
     const [isFocused, setIsFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState<number>();
+    const [columnKeys, setColumnKeys] = useState(["title"]);
+
+    const columns = defaultColumns.filter((column) =>
+      columnKeys.some((key) => key === column.key),
+    );
 
     useEffect(() => {
       setSelectedIndex(undefined);
@@ -78,6 +119,7 @@ export const ConferenceList = memo(
 
     return (
       <StyledTable
+        showHeader={columns.length > 1}
         rowKey="index"
         fillHeight
         data={data}
@@ -87,22 +129,15 @@ export const ConferenceList = memo(
         }}
         onFocusUpdate={(focus) => setIsFocused(focus)}
       >
-        <Column width={80} key="id">
-          <HeaderCell>{"Id"}</HeaderCell>
-          <StyledCell dataKey="id" />
-        </Column>
-        <Column flexGrow={1} key="title">
-          <HeaderCell>{"Title"}</HeaderCell>
-          <StyledCell dataKey="title" />
-        </Column>
-        <Column width={80} key="count">
-          <HeaderCell>{"Count"}</HeaderCell>
-          <StyledCell dataKey="message_count" />
-        </Column>
-        <Column width={80} key="unread">
-          <HeaderCell>{"Unread"}</HeaderCell>
-          <StyledCell dataKey="unread_count" />
-        </Column>
+        {columns.map((col) => {
+          const { label, key, dataKey, ...rest } = col;
+          return (
+            <Column {...rest}>
+              <HeaderCell>{label}</HeaderCell>
+              <StyledCell dataKey={dataKey} />
+            </Column>
+          );
+        })}
       </StyledTable>
     );
   },

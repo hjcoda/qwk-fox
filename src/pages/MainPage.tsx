@@ -154,7 +154,7 @@ export const MainPage = ({
             dividerClassName={"h-divider"}
             resizable={true}
           >
-            <Pane className="expand-contents" defaultSize="45%">
+            <Pane className="expand-contents" defaultSize="30%">
               <GroupBox
                 className={"padded expand-contents"}
                 label={"Conferences"}

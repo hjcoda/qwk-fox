@@ -1,6 +1,8 @@
 import { Frame, ProgressBar } from "react95";
 import { Server } from "../data/DTO";
 
+import "./StatusBar.css";
+
 export const StatusBar = ({
   servers,
   bbsId,
@@ -22,7 +24,7 @@ export const StatusBar = ({
     classNames.push("disabled");
   }
   return (
-    <Frame variant="status">
+    <Frame variant="status" className="status-bar-container">
       <p className={classNames.join(" ")}>{`User name : ${activeUserName}`}</p>
       {importProgress && (
         <ProgressBar

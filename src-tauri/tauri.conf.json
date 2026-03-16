@@ -15,7 +15,9 @@
         "zoomHotkeysEnabled": true,
         "title": "QWK Fox",
         "width": 1000,
-        "height": 800
+        "height": 800,
+        "backgroundColor": "#c6c6c6",
+        "decorations": false
       }
     ],
     "security": {

@@ -1,3 +1,13 @@
+.status-bar-container {
+  margin: 0 8px 0 8px;
+  display: flex;
+  flex-direction: row;
+}
+
+.status-bar-field {
+  padding: 0 4px 0 4px;
+}
+
 .disabled {
-    color: light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
+  color: light-dark(rgb(84, 84, 84), rgb(170, 170, 170));
 }

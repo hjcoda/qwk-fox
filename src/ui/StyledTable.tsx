@@ -58,6 +58,7 @@ export const StyledTable = <
       <Table
         locale={{ emptyMessage: "" }}
         fillHeight
+        rowHeight={30}
         onRowClick={(row) => {
           const value = row[props.rowKey];
           props.onSelectedIndexChanged(Number(value));
