@@ -62,6 +62,18 @@ main {
 .rs-table-row-header .rs-table-cell-content {
   background-color: var(--table-header-bg, #c6c6c6);
   font-size: initial;
+}
+
+.rs-table-body-row-wrapper .rs-table-row:hover .rs-table-cell {
+  background-color: color-mix(
+    in lab,
+    var(--table-bg, white) 60%,
+    var(--table-highlight-bg, #060084) 50%
+  ) !important;
+}
+
+.row {
+  background-color: var(--table-bg, white);
   color: var(--table-header-text, black);
 }
 
@@ -81,7 +93,6 @@ main {
 }
 
 .row--highlighted--unfocussed {
-  background-color: white !important;
   border-top: solid 2px var(--table-highlight-unfocused-border, #060084) !important;
   border-bottom: solid 2px var(--table-highlight-unfocused-border, #060084) !important;
 }

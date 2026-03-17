@@ -27,7 +27,7 @@ export const GlobalStyles = createGlobalStyle`
     color: ${({ theme }: { theme: Theme }) => theme.canvasText};
     min-height: 100vh;
   }
-  :root {
+  :root {    
     --border-light: ${({ theme }: { theme: Theme }) => theme.borderLight};
     --table-border: ${({ theme }: { theme: Theme }) => theme.borderDark};
     --table-row-border: ${({ theme }: { theme: Theme }) => theme.borderLight};
@@ -38,7 +38,7 @@ export const GlobalStyles = createGlobalStyle`
 
     --table-header-bg: ${({ theme }: { theme: Theme }) => theme.material};
     --table-header-text: ${({ theme }: { theme: Theme }) => theme.materialText};
-   
+       
     --table-highlight-bg: ${({ theme }: { theme: Theme }) => theme.hoverBackground};
     --table-highlight-text: ${({ theme }: { theme: Theme }) => theme.canvasTextInvert};
     --table-highlight-border: ${({ theme }: { theme: Theme }) => theme.materialText};

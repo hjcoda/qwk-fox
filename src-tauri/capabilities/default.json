@@ -13,6 +13,7 @@
     "sql:default",
     "dialog:default",
     "process:default",
+    "process:allow-exit",
     "core:webview:allow-set-webview-zoom",
     "core:window:allow-close",
     "core:window:allow-minimize",

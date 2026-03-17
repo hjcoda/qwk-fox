@@ -57,7 +57,7 @@ export const MessageTree = memo(
         dataKey: keyof Message;
       }) => {
         if (rowData) {
-          const classNames = ["tree-row"];
+          const classNames = ["row"];
           if (rowData.msg_id === selectedIndex) {
             classNames.push(
               isFocused ? "row--highlighted" : "row--highlighted--unfocussed",

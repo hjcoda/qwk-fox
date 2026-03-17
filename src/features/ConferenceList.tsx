@@ -98,7 +98,7 @@ export const ConferenceList = memo(
         dataKey: keyof ConferenceDisplay;
       }) => {
         if (rowData) {
-          const classNames = ["tree-row"];
+          const classNames = ["row"];
           if (rowData.id === selectedIndex) {
             classNames.push(
               isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
