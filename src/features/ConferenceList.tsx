@@ -28,24 +28,6 @@ const Title_Column = {
   flexGrow: 1,
 };
 
-const allColumns = [
-  ID_Column,
-  Title_Column,
-  {
-    key: "count",
-    label: "Count",
-    dataKey: "message_count" as keyof ConferenceDisplay,
-    width: 80,
-  },
-
-  {
-    key: "unread",
-    label: "Unread",
-    dataKey: "unread_count" as keyof ConferenceDisplay,
-    width: 80,
-  },
-];
-
 const defaultColumns = [ID_Column, Title_Column];
 
 export const ConferenceList = memo(
@@ -62,7 +44,7 @@ export const ConferenceList = memo(
   }): React.ReactElement => {
     const [isFocused, setIsFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState<number>();
-    const [columnKeys, setColumnKeys] = useState(["title"]);
+    const [columnKeys] = useState(["title"]);
 
     const columns = defaultColumns.filter((column) =>
       columnKeys.some((key) => key === column.key),
