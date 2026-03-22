@@ -10,6 +10,7 @@ interface UseMultiMenuReturn {
   menuPosition: MenuPosition;
   menuRefs: React.RefObject<Record<string, HTMLButtonElement | null>>;
   toggleMenu: (menuId: string) => void;
+  openMenuByHover: (menuId: string) => void;
   closeMenu: () => void;
 }
 
@@ -37,6 +38,24 @@ const useMultiMenuPosition = (): UseMultiMenuReturn => {
       setOpenMenu((prevMenu) => (prevMenu === menuId ? null : menuId));
     }
   }, []);
+
+  const openMenuByHover = useCallback((menuId: string) => {
+    if (!openMenu || openMenu === menuId) {
+      return;
+    }
+
+    const buttonRef = menuRefs.current[menuId];
+    if (!buttonRef) {
+      return;
+    }
+
+    const rect = buttonRef.getBoundingClientRect();
+    setMenuPosition({
+      top: rect.bottom,
+      left: rect.left,
+    });
+    setOpenMenu(menuId);
+  }, [openMenu]);
 
   const closeMenu = useCallback(() => {
     setOpenMenu(null);
@@ -71,6 +90,7 @@ const useMultiMenuPosition = (): UseMultiMenuReturn => {
     menuPosition,
     menuRefs,
     toggleMenu,
+    openMenuByHover,
     closeMenu,
   };
 };

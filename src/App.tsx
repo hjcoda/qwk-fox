@@ -1,4 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
 
 import { Server } from "./data/DTO";
@@ -15,30 +17,34 @@ import original from "react95/dist/themes/original";
 import { Theme } from "react95/dist/common/themes/types";
 import { ViewSettings } from "./AppSettings";
 import { Menu } from "./features/Menu";
+import { AboutPage } from "./features/AboutPage.tsx";
+import { PreferencesPage } from "./features/PreferencesPage.tsx";
 import { TitleBar } from "./features/TitleBar";
 import { GlobalStyles } from "./GlobalStyles";
-import {
-  aboutDialog,
-  handleExitApp,
-  importQWKFileToDB,
-} from "./interop/Interop";
+import { handleExitApp, importQWKFileToDB } from "./interop/Interop";
 
 import "./App.css";
 
-type ThemeName = Exclude<keyof typeof react95themes, "default">;
-
-const themeNames: string[] = Object.keys(react95themes).filter(
-  (name) =>
-    name !== "default" && typeof react95themes[name as ThemeName] === "object",
+export const themeNames = Object.keys(react95themes).filter(
+  (name) => name !== "default",
 );
 
+export const themeMap = react95themes as Record<string, Theme>;
+export const FONT_STORAGE_KEY = "qwk-fox.message-font";
+export const FONT_SIZE_STORAGE_KEY = "qwk-fox.message-font-size";
+
 function App() {
+  const getInitialThemeName = (): string => {
+    const stored = localStorage.getItem("qwk-fox.theme");
+    return stored ?? "original";
+  };
   const [servers, setServers] = useState<Server[]>([]);
   const [lastImportTime, setLastImportTime] = useState<number>();
   const [viewSettings, setViewSettings] = useState<ViewSettings>({
     hideEmptyConferences: true,
     hideReadMessages: false,
     showMessageThreads: true,
+    constrainMessageColumns: true,
   });
   const [importProgress, setImportProgress] = useState<{
     stage: string;
@@ -46,7 +52,10 @@ function App() {
     total: number;
     percent: number;
   } | null>(null);
-  const [themeName, setThemeName] = useState<string>("original");
+  const [themeName, setThemeName] = useState<string>(getInitialThemeName);
+  const windowType = new URL(window.location.href).searchParams.get("window");
+  const isPreferencesWindow = windowType === "preferences";
+  const isAboutWindow = windowType === "about";
 
   useTauriEvent("import-complete", () => {
     setImportProgress(null);
@@ -73,9 +82,105 @@ function App() {
     getServers();
   }, [lastImportTime]);
 
+  useEffect(() => {
+    if (isPreferencesWindow || isAboutWindow) {
+      return;
+    }
+
+    const unlistenPromise = getCurrentWindow().onCloseRequested(async () => {
+      const preferencesWindow = await WebviewWindow.getByLabel("preferences");
+      if (preferencesWindow) {
+        await preferencesWindow.hide();
+      }
+      const aboutWindow = await WebviewWindow.getByLabel("about");
+      if (aboutWindow) {
+        await aboutWindow.hide();
+      }
+      handleExitApp();
+    });
+
+    return () => {
+      unlistenPromise.then((unlisten) => unlisten());
+    };
+  }, [isPreferencesWindow]);
+
+  useEffect(() => {
+    if (isPreferencesWindow || isAboutWindow) {
+      return;
+    }
+
+    const baseUrl = new URL(window.location.href);
+    const createOrShow = (label: string, width: number, height: number) => {
+      WebviewWindow.getByLabel(label).then((existing) => {
+        if (existing) {
+          return;
+        }
+        const url = new URL(baseUrl.toString());
+        url.searchParams.set("window", label);
+        const windowRef = new WebviewWindow(label, {
+          title: label === "preferences" ? "Preferences" : "About QWK Fox",
+          url: url.toString(),
+          width,
+          height,
+          resizable: false,
+          decorations: false,
+          visible: false,
+        });
+        windowRef.once("tauri://error", (event) => {
+          console.error(`Failed to precreate ${label} window`, event);
+        });
+        windowRef.onCloseRequested(async (event) => {
+          event.preventDefault();
+          await windowRef.hide();
+        });
+      });
+    };
+
+    createOrShow("preferences", 640, 480);
+    createOrShow("about", 480, 320);
+  }, [isPreferencesWindow, isAboutWindow]);
+
+  useEffect(() => {
+    if (isPreferencesWindow || isAboutWindow) {
+      return;
+    }
+
+    import("./features/PreferencesPage.tsx");
+    import("./features/AboutPage.tsx");
+  }, [isPreferencesWindow, isAboutWindow]);
+
+  useEffect(() => {
+    localStorage.setItem("qwk-fox.theme", themeName);
+  }, [themeName]);
+
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "qwk-fox.theme" && event.newValue) {
+        setThemeName(event.newValue);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  const currentTheme: Theme = themeMap[themeName] ?? original;
+
   const menu = {
     File: [
       { text: "Import...", action: () => importQWKFileToDB() },
+      {
+        text: "Preferences...",
+        action: () => {
+          WebviewWindow.getByLabel("preferences").then((existing) => {
+            if (existing) {
+              existing.show();
+              existing.setFocus();
+              return;
+            }
+          });
+        },
+      },
       {
         text: "Quit",
         action: () => {
@@ -117,18 +222,29 @@ function App() {
           });
         },
       },
+      {
+        checked: viewSettings.constrainMessageColumns,
+        text: "Column Limit",
+        action: () => {
+          const settings = viewSettings;
+          setViewSettings({
+            ...settings,
+            constrainMessageColumns: !settings.constrainMessageColumns,
+          });
+        },
+      },
     ],
-    Theme: themeNames.map((name) => ({
-      text: name,
-      checked: themeName === name,
-      enabled: true,
-      action: () => setThemeName(name),
-    })),
     Help: [
       {
         text: "About",
         action: () => {
-          aboutDialog();
+          WebviewWindow.getByLabel("about").then((existing) => {
+            if (existing) {
+              existing.show();
+              existing.setFocus();
+              return;
+            }
+          });
         },
       },
     ],
@@ -144,12 +260,23 @@ function App() {
     }
   }
 
-  interface ThemesDict {
-    [key: string]: Theme;
+  if (isPreferencesWindow) {
+    return (
+      <ThemeProvider theme={currentTheme}>
+        <GlobalStyles theme={currentTheme} />
+        <PreferencesPage />
+      </ThemeProvider>
+    );
   }
 
-  const themes: ThemesDict = react95themes;
-  const currentTheme: Theme = themes[themeName] ?? original;
+  if (isAboutWindow) {
+    return (
+      <ThemeProvider theme={currentTheme}>
+        <GlobalStyles theme={currentTheme} />
+        <AboutPage />
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={currentTheme}>

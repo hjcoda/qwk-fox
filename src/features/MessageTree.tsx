@@ -12,7 +12,7 @@ import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useSortedData } from "../hooks/useSortedData";
-import { StyledTable } from "../ui/StyledTable";
+import { StyledTable } from "../ui/StyledTable/StyledTable";
 
 export const MessageTree = memo(
   ({
@@ -20,11 +20,13 @@ export const MessageTree = memo(
     useThreads,
     messages,
     onSelectedMessageChanged,
+    scrollToTopKey,
   }: {
     hideRead: boolean;
     useThreads: boolean;
     messages: Message[] | null;
     onSelectedMessageChanged: (message_id: number) => void;
+    scrollToTopKey?: string | number | null;
   }) => {
     const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
     const [isFocused, setIsFocused] = useState(false);
@@ -93,6 +95,7 @@ export const MessageTree = memo(
         })}
         fillHeight
         shouldUpdateScroll={false}
+        scrollToTopKey={scrollToTopKey}
         onSelectedIndexChanged={(index) => {
           setSelectedIndex(index);
           setExpandedRowKeys((prevKeys) => {

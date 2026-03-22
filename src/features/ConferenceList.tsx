@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Conference } from "../data/DTO";
 import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
-import { StyledTable } from "../ui/StyledTable";
+import { StyledTable } from "../ui/StyledTable/StyledTable";
 import Cell from "rsuite/esm/Table/TableCell";
 
 type ConferenceDisplay = {

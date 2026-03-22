@@ -1,7 +1,33 @@
+import { Button } from "react95";
 import { Message } from "../data/DTO";
 import "./MessageDetailSlug.css";
 
-export const MessageDetailSlug = ({ message }: { message: Message | null }) => {
+type MessageDetailSlugProps = {
+  message: Message | null;
+  onFontSizeDecrease?: () => void;
+  onFontSizeIncrease?: () => void;
+  fontSize?: number;
+  minFontSize?: number;
+  maxFontSize?: number;
+};
+
+export const MessageDetailSlug = ({
+  message,
+  onFontSizeDecrease,
+  onFontSizeIncrease,
+  fontSize,
+  minFontSize,
+  maxFontSize,
+}: MessageDetailSlugProps) => {
+  const canDecrease =
+    minFontSize === undefined || fontSize === undefined
+      ? true
+      : fontSize > minFontSize;
+  const canIncrease =
+    maxFontSize === undefined || fontSize === undefined
+      ? true
+      : fontSize < maxFontSize;
+
   return (
     <div className="message-detail-slug">
       <div className="message-detail-slug-item">
@@ -15,6 +41,12 @@ export const MessageDetailSlug = ({ message }: { message: Message | null }) => {
       <div className="message-detail-slug-item">
         <div>{`Sent:`}</div>
         <div>{message?.date}</div>
+        {message?.header?.x_ftn_chrs && (
+          <>
+            <div>{`Encoding:`}</div>
+            <div>{message?.header?.x_ftn_chrs}</div>
+          </>
+        )}
       </div>
     </div>
   );

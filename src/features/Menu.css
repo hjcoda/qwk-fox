@@ -4,3 +4,25 @@
   left: 0px;
   right: 0px;
 }
+
+.menu-item {
+  padding: 0 !important;
+  display: inline-flex;
+  gap: 5px;
+  height: 32px !important;
+}
+
+.menu-item-text {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.menu-item-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.menu-item-icon label {
+  display: block;
+}

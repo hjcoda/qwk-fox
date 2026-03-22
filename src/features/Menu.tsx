@@ -8,6 +8,7 @@ type MenuItem = {
   text: string;
   action: () => void;
   items?: MenuItem[];
+  style?: React.CSSProperties;
 };
 
 type MenuProps = {
@@ -17,8 +18,14 @@ type MenuProps = {
 };
 
 export const Menu = ({ data }: MenuProps) => {
-  const { openMenu, closeMenu, menuRefs, toggleMenu, menuPosition } =
-    useMultiMenuPosition();
+  const {
+    openMenu,
+    closeMenu,
+    menuRefs,
+    toggleMenu,
+    menuPosition,
+    openMenuByHover,
+  } = useMultiMenuPosition();
 
   const handleMenuItemClick = (item: string) => {
     toggleMenu(item);
@@ -31,10 +38,12 @@ export const Menu = ({ data }: MenuProps) => {
           <Button
             variant="menu"
             size="sm"
+            className={openMenu === key ? "menu-title--active" : undefined}
             ref={(el) => {
               menuRefs.current[key] = el;
             }}
             onClick={() => handleMenuItemClick(key)}
+            onMouseEnter={() => openMenuByHover(key)}
           >
             {key}
           </Button>
@@ -56,15 +65,19 @@ export const Menu = ({ data }: MenuProps) => {
         >
           {data[openMenu].map((item: MenuItem) => (
             <MenuListItem
+              className="menu-item"
+              style={item.style}
               onClick={() => {
                 item.action();
                 closeMenu();
               }}
             >
-              {item.checked !== undefined && (
-                <Checkbox variant="flat" checked={!!item.checked} />
-              )}
-              {item.text}
+              <div className="menu-item-icon">
+                {item.checked !== undefined && (
+                  <Checkbox variant="flat" checked={!!item.checked} />
+                )}
+              </div>
+              <div className="menu-item-text">{item.text}</div>
               {item.items && ">"}
             </MenuListItem>
           ))}

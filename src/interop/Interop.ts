@@ -5,7 +5,8 @@ import { exit } from "@tauri-apps/plugin-process";
 export async function aboutDialog() {
   // Use frontend dialog API to pick file (non-blocking)
   await message(
-    'Dedicated to the memory of Mark "Sparky" Herring, the creator of the QWK packet format.',
+    `Dedicated to the memory of Mark "Sparky" Herring, the creator of the QWK packet format.
+    Fonts by VileR - https://int10h.org/oldschool-pc-fonts/`,
     "About",
   );
 }

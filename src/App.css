@@ -12,6 +12,10 @@ main {
   align-items: stretch;
 }
 
+main:empty {
+  display: none;
+}
+
 .window-content {
   position: fixed;
   top: 64px;
@@ -61,6 +65,7 @@ main {
 
 .rs-table-row-header .rs-table-cell-content {
   background-color: var(--table-header-bg, #c6c6c6);
+  color: var(--table-header-text, white) !important;
   font-size: initial;
 }
 

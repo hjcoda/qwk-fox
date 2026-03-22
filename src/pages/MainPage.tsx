@@ -176,6 +176,7 @@ export const MainPage = ({
                   messages={messages}
                   onSelectedMessageChanged={onSelectedMessageChanged}
                   useThreads={appSettings.viewSettings.showMessageThreads}
+                  scrollToTopKey={conferenceId}
                 />
               </GroupBox>
             </Pane>
@@ -183,7 +184,10 @@ export const MainPage = ({
         </Pane>
         <Pane className="expand-contents">
           <GroupBox label={"Message"} className={"padded expand-contents"}>
-            <MessageTextBox message={message} />
+            <MessageTextBox
+              message={message}
+              constrainColumns={appSettings.viewSettings.constrainMessageColumns}
+            />
           </GroupBox>
         </Pane>
       </SplitPane>

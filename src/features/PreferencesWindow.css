@@ -1,0 +1,97 @@
+.preferences-window {
+  background: var(--window-bg, #c0c0c0);
+  border: 2px solid var(--border-lightest, #dfdfdf);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.preferences-window-standalone {
+  height: 100vh;
+}
+
+.preferences-window-header .titlebar {
+  border-bottom: 2px solid var(--border-dark, #808080);
+  width: 100%;
+}
+
+.preferences-window-body {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  flex: 1 1 auto;
+  margin-top: 32px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.preferences-tabs {
+  margin-bottom: 0;
+}
+
+.preferences-tab-body {
+  margin-top: 0;
+}
+
+.preferences-theme-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.preferences-theme-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preferences-theme-preview-frame {
+  padding: 16px;
+  position: relative;
+  z-index: 0;
+}
+
+.preferences-theme-preview-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.preferences-theme-preview-row:last-child {
+  margin-bottom: 0;
+}
+
+.preferences-window-panel {
+  min-height: 200px;
+  padding: 16px;
+}
+
+.preferences-window-placeholder {
+  color: var(--canvas-text, #000);
+}
+
+.about-window-text {
+  white-space: pre-wrap;
+}
+
+.preferences-window-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.preferences-window .select-menu,
+.preferences-window [role="listbox"] {
+  position: absolute;
+  z-index: 10;
+  transform: translateY(0) !important;
+  top: 100%;
+  left: 0;
+  min-height: 120px;
+  max-height: 240px;
+  overflow-y: auto;
+}

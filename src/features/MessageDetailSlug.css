@@ -10,5 +10,17 @@
   display: grid;
   gap: 0px 10px;
   grid-template-rows: 3;
-  grid-template-columns: 3em auto;
+  grid-template-columns: 5em auto;
+}
+
+.message-detail-font-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.message-detail-font-size {
+  min-width: 3.5em;
+  text-align: center;
+  display: inline-block;
 }

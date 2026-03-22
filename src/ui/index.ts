@@ -1,3 +1,3 @@
-import { IconChain } from "./IconChain";
+import { IconChain } from "./IconChain/IconChain";
 
 export { IconChain };
