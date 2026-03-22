@@ -1,33 +1,11 @@
-import { Button } from "react95";
 import { Message } from "../data/DTO";
 import "./MessageDetailSlug.css";
 
 type MessageDetailSlugProps = {
   message: Message | null;
-  onFontSizeDecrease?: () => void;
-  onFontSizeIncrease?: () => void;
-  fontSize?: number;
-  minFontSize?: number;
-  maxFontSize?: number;
 };
 
-export const MessageDetailSlug = ({
-  message,
-  onFontSizeDecrease,
-  onFontSizeIncrease,
-  fontSize,
-  minFontSize,
-  maxFontSize,
-}: MessageDetailSlugProps) => {
-  const canDecrease =
-    minFontSize === undefined || fontSize === undefined
-      ? true
-      : fontSize > minFontSize;
-  const canIncrease =
-    maxFontSize === undefined || fontSize === undefined
-      ? true
-      : fontSize < maxFontSize;
-
+export const MessageDetailSlug = ({ message }: MessageDetailSlugProps) => {
   return (
     <div className="message-detail-slug">
       <div className="message-detail-slug-item">

@@ -18,8 +18,6 @@ type MessageTextBoxProps = {
 };
 
 const DEFAULT_FONT_SIZE = 14;
-const MIN_FONT_SIZE = 10;
-const MAX_FONT_SIZE = 60;
 const ANSI_SEQUENCE = /\x1b\[[0-9;?]*[A-Za-z]/;
 
 const wrapLineByWords = (line: string, width: number): string[] => {
