@@ -1,7 +1,7 @@
 import { Button, Frame, GroupBox } from "react95";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TitleBar } from "./TitleBar";
 import { themeMap } from "../App";
+import { getCurrentWindow } from "../lib/safeWindow";
 import "./PreferencesWindow.css";
 
 const ABOUT_TEXT =

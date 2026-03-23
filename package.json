@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test:e2e:web": "npm run build && playwright test",
+    "test:e2e:tauri": "playwright test e2e/smoke.spec.ts",
     "tauri": "tauri",
     "release": "release-it",
     "storybook": "storybook dev -p 6006",

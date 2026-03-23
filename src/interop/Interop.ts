@@ -1,9 +1,16 @@
-import { invoke } from "@tauri-apps/api/core";
+import { invoke as tauriInvoke } from "@tauri-apps/api/core";
 import { message, open } from "@tauri-apps/plugin-dialog";
 import { exit } from "@tauri-apps/plugin-process";
 
+const invoke = tauriInvoke ?? (async () => {
+  throw new Error("invoke not available in web mode");
+});
+
 export async function aboutDialog() {
-  // Use frontend dialog API to pick file (non-blocking)
+  if (!message) {
+    console.log("About: QWK Fox");
+    return;
+  }
   await message(
     `Dedicated to the memory of Mark "Sparky" Herring, the creator of the QWK packet format.
     Fonts by VileR - https://int10h.org/oldschool-pc-fonts/`,
@@ -12,7 +19,12 @@ export async function aboutDialog() {
 }
 
 export async function importQWKFileToDB() {
-  const fileExtensions = [];
+  if (!open || !invoke) {
+    console.log("File import not available in web mode");
+    return;
+  }
+  
+  const fileExtensions: string[] = [];
   for (let i = 1; i < 10; i++) {
     fileExtensions.push(`qw${i}`);
   }
@@ -20,7 +32,6 @@ export async function importQWKFileToDB() {
     fileExtensions.push(`q${i}`);
   }
 
-  // Use frontend dialog API to pick file (non-blocking)
   const selected = await open({
     multiple: false,
     filters: [
@@ -28,12 +39,11 @@ export async function importQWKFileToDB() {
     ],
   });
   if (!selected) {
-    return; // User cancelled
+    return;
   }
   const filePath = selected as string;
 
   try {
-    // Call backend to parse the file
     await invoke<null>("import_qwk_file_to_db", {
       filePath,
     });
@@ -44,11 +54,12 @@ export async function importQWKFileToDB() {
 }
 
 export async function handleExitApp() {
+  if (!exit) {
+    console.log("Exit not available in web mode");
+    return;
+  }
   try {
-    // Exits the application with a default code of 0
     await exit();
-    // Optionally, you can provide an exit code
-    // await exit(1);
   } catch (error) {
     console.error("Failed to exit app:", error);
   }

@@ -1,7 +1,6 @@
-import { invoke } from "@tauri-apps/api/core";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
+import { invoke } from "./lib/safeInvoke";
+import { getCurrentWindow, WebviewWindow } from "./lib/safeWindow";
 
 import { Server } from "./data/DTO";
 

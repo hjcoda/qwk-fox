@@ -1,5 +1,5 @@
-import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useMemo, useState } from "react";
+import { invoke } from "../lib/safeInvoke";
 import { Pane, SplitPane } from "react-split-pane";
 import { GroupBox } from "react95";
 import { AppSettings } from "../AppSettings";

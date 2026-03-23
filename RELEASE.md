@@ -51,3 +51,17 @@ release-it needs `GITHUB_TOKEN` for local runs:
 ```bash
 GITHUB_TOKEN=ghp_xxx npm run release
 ```
+
+## Smoke Tests
+
+The CI runs smoke tests against the built Tauri binary (Linux and Windows) after publish.
+
+To run smoke tests locally:
+
+```bash
+# Build the Tauri app first
+npm run tauri build
+
+# Run smoke tests against the binary
+TEST_PLATFORM=linux TEST_APP_PATH=./src-tauri/target/release/bundle linux npm run test:e2e:tauri
+```

@@ -1,7 +1,7 @@
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { useMemo } from "react";
 import { Server } from "../data/DTO";
 import { IconChain } from "../ui/IconChain/IconChain";
+import { convertFileSrc } from "../lib/safeInvoke";
 
 export const IconServerList = ({
   servers,

@@ -1,5 +1,13 @@
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getCurrentWindow as tauriGetCurrentWindow } from "@tauri-apps/api/window";
 import "./TitleBar.css";
+
+const getCurrentWindow = tauriGetCurrentWindow ?? (() => {
+  return {
+    minimize: () => console.log("minimize not available"),
+    toggleMaximize: () => console.log("toggleMaximize not available"),
+    close: () => console.log("close not available"),
+  };
+});
 
 export const TitleBar = ({ title = "QWK Fox" }: { title?: string }) => {
   return (

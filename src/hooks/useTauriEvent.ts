@@ -1,7 +1,6 @@
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { useEffect, useRef } from "react";
 
-// Subscribe to events from the rust backend
 export function useTauriEvent(
   eventName: string,
   handler: (payload: unknown) => void,
@@ -13,9 +12,13 @@ export function useTauriEvent(
   }, [handler]);
 
   useEffect(() => {
-    let unlisten: UnlistenFn;
+    let unlisten: UnlistenFn | undefined;
 
     const setupListener = async () => {
+      if (!listen) {
+        console.log("Tauri events not available in web mode");
+        return;
+      }
       unlisten = await listen(eventName, (event) => {
         handlerRef.current(event.payload);
       });

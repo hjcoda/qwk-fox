@@ -12,8 +12,8 @@ import {
   NumberInput,
 } from "react95";
 import * as styledComponents from "styled-components";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TitleBar } from "./TitleBar";
+import { getCurrentWindow } from "../lib/safeWindow";
 import "./PreferencesWindow.css";
 import {
   FONT_SIZE_STORAGE_KEY,
