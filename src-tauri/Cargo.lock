@@ -3700,7 +3700,7 @@ dependencies = [
 
 [[package]]
 name = "qwk-fox"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "chrono",
  "qwk_rs",
@@ -3719,7 +3719,7 @@ dependencies = [
 
 [[package]]
 name = "qwk_rs"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "base64 0.22.1",
  "bstr",
