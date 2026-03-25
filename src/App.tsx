@@ -32,6 +32,7 @@ export const themeNames = Object.keys(react95themes).filter(
 export const themeMap = react95themes as Record<string, Theme>;
 export const FONT_STORAGE_KEY = "qwk-fox.message-font";
 export const FONT_SIZE_STORAGE_KEY = "qwk-fox.message-font-size";
+export const LOCALE_STORAGE_KEY = "qwk-fox.locale";
 
 function App() {
   const getInitialThemeName = (): string => {

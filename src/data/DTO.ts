@@ -30,6 +30,7 @@ export interface Message {
   in_reply_to: number;
   conference_id: number;
   header?: MessageHeader;
+  dateToFormat?: string;
 }
 
 export interface MessageHeader {
