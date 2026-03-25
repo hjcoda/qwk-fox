@@ -96,10 +96,10 @@ export const enhanceMessages = (messages: Message[]): Message[] => {
     const enhanced = { ...m, subject: m.header?.subject ?? m.subject };
     if (m.header) {
       enhanced.date = formatDate(
-        new Date(m.header.when_written ?? enhanced.date),
+        m.header.when_written ?? enhanced.date,
       );
     } else {
-      enhanced.date = formatDate(new Date(m.date));
+      enhanced.date = formatDate(m.date);
     }
 
     return enhanced;
