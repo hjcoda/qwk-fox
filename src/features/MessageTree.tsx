@@ -10,24 +10,24 @@ import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
 import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
-import { memo, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSortedData } from "../hooks/useSortedData";
 import { StyledTable } from "../ui/StyledTable/StyledTable";
+import { formatDate } from "../data/DateTimeFormat";
 
-export const MessageTree = memo(
-  ({
-    hideRead,
-    useThreads,
-    messages,
-    onSelectedMessageChanged,
-    scrollToTopKey,
-  }: {
-    hideRead: boolean;
-    useThreads: boolean;
-    messages: Message[] | null;
-    onSelectedMessageChanged: (message_id: number) => void;
-    scrollToTopKey?: string | number | null;
-  }) => {
+export const MessageTree = ({
+  hideRead,
+  useThreads,
+  messages,
+  onSelectedMessageChanged,
+  scrollToTopKey,
+}: {
+  hideRead: boolean;
+  useThreads: boolean;
+  messages: Message[] | null;
+  onSelectedMessageChanged: (message_id: number) => void;
+  scrollToTopKey?: string | number | null;
+}) => {
     const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
     const [isFocused, setIsFocused] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState<number>();
@@ -119,9 +119,14 @@ export const MessageTree = memo(
         </Column>
         <Column flexGrow={1} sortable>
           <HeaderCell>Date</HeaderCell>
-          <MessageCell dataKey="date" />
+          <Cell>
+            {(rowData) => {
+              const msg = rowData as Message;
+              const dateStr = msg.dateToFormat ?? msg.date;
+              return formatDate(dateStr);
+            }}
+          </Cell>
         </Column>
       </StyledTable>
     );
-  },
-);
+};

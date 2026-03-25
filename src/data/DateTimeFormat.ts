@@ -51,5 +51,6 @@ export const formatDate = (date: string): string => {
     }
   }
 
-  return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
+  const locale = localStorage.getItem("qwk-fox.locale") ?? "en-US";
+  return new Intl.DateTimeFormat(locale, options).format(new Date(date));
 }
