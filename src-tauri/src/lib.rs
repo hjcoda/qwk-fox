@@ -25,9 +25,11 @@ pub fn run() {
                 .join("salt.txt");
             app.handle()
                 .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
+
             Ok(())
         })
         .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_devtools::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
