@@ -14,7 +14,7 @@ import {
 import * as styledComponents from "styled-components";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TitleBar } from "./TitleBar";
-import "./PreferencesWindow.css";
+import "./PreferencesWindow.scss";
 import {
   FONT_SIZE_STORAGE_KEY,
   FONT_STORAGE_KEY,

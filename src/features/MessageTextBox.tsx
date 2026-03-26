@@ -3,7 +3,7 @@ import { Frame } from "react95";
 import { Message } from "../data/DTO";
 import { extractMessageExtensions } from "../data/MessageExtensionUtils";
 import { MessageDetailSlug } from "./MessageDetailSlug";
-import "./MessageTextBox.css";
+import "./MessageTextBox.scss";
 import { ANSIRenderer } from "../ui/ANSIRenderer/ANSIRenderer";
 import { decodeMessageBytes } from "../ui/ANSIRenderer/MessageDecode";
 import { FONT_SIZE_STORAGE_KEY, FONT_STORAGE_KEY } from "../App";

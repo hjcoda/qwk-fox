@@ -1,6 +1,6 @@
 import { Button, Frame, GroupBox } from "react95";
 import { TitleBar } from "./TitleBar";
-import "./PreferencesWindow.css";
+import "./PreferencesWindow.scss";
 
 type PreferencesWindowProps = {
   onClose: () => void;

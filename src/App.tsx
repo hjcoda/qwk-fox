@@ -23,7 +23,7 @@ import { TitleBar } from "./features/TitleBar";
 import { GlobalStyles } from "./GlobalStyles";
 import { handleExitApp, importQWKFileToDB } from "./interop/Interop";
 
-import "./App.css";
+import "./App.scss";
 
 export const themeNames = Object.keys(react95themes).filter(
   (name) => name !== "default",

@@ -2,7 +2,7 @@ import { Button, Frame, GroupBox } from "react95";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TitleBar } from "./TitleBar";
 import { themeMap } from "../App";
-import "./PreferencesWindow.css";
+import "./PreferencesWindow.scss";
 
 const ABOUT_TEXT =
   'Dedicated to the memory of Mark "Sparky" Herring, the creator of the QWK packet format.';

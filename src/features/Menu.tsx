@@ -1,7 +1,7 @@
 import { Button, Checkbox, MenuList, MenuListItem, Toolbar } from "react95";
 import useMultiMenuPosition from "../hooks/useMultiMenuPosition";
 
-import "./Menu.css";
+import "./Menu.scss";
 
 type MenuItem = {
   checked?: boolean;
