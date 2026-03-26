@@ -1,7 +1,7 @@
 import { Button, Checkbox, MenuList, MenuListItem, Toolbar } from "react95";
-import useMultiMenuPosition from "../hooks/useMultiMenuPosition";
+import useMultiMenuPosition from "../../hooks/useMultiMenuPosition";
 
-import "./Menu.scss";
+import "./StyledMenu.scss";
 
 type MenuItem = {
   checked?: boolean;
@@ -17,7 +17,7 @@ type MenuProps = {
   };
 };
 
-export const Menu = ({ data }: MenuProps) => {
+export const StyledMenu = ({ data }: MenuProps) => {
   const {
     openMenu,
     closeMenu,

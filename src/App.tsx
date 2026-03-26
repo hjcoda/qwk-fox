@@ -16,9 +16,9 @@ import original from "react95/dist/themes/original";
 
 import { Theme } from "react95/dist/common/themes/types";
 import { ViewSettings } from "./AppSettings";
-import { Menu } from "./features/Menu";
-import { AboutPage } from "./features/AboutPage.tsx";
-import { PreferencesPage } from "./features/PreferencesPage.tsx";
+import { StyledMenu } from "./ui/StyledMenu/StyledMenu.tsx";
+import { AboutWindow } from "./features/windows/AboutWindow.tsx";
+import { PreferencesWindow } from "./features/windows/PreferencesWindow.tsx";
 import { TitleBar } from "./features/TitleBar";
 import { GlobalStyles } from "./GlobalStyles";
 import { handleExitApp, importQWKFileToDB } from "./interop/Interop";
@@ -146,8 +146,8 @@ function App() {
       return;
     }
 
-    import("./features/PreferencesPage.tsx");
-    import("./features/AboutPage.tsx");
+    import("./features/windows/PreferencesWindow.tsx");
+    import("./features/windows/AboutWindow.tsx");
   }, [isPreferencesWindow, isAboutWindow]);
 
   useEffect(() => {
@@ -265,7 +265,7 @@ function App() {
     return (
       <ThemeProvider theme={currentTheme}>
         <GlobalStyles theme={currentTheme} />
-        <PreferencesPage />
+        <PreferencesWindow />
       </ThemeProvider>
     );
   }
@@ -274,7 +274,7 @@ function App() {
     return (
       <ThemeProvider theme={currentTheme}>
         <GlobalStyles theme={currentTheme} />
-        <AboutPage />
+        <AboutWindow />
       </ThemeProvider>
     );
   }
@@ -283,7 +283,7 @@ function App() {
     <ThemeProvider theme={currentTheme}>
       <GlobalStyles theme={currentTheme} />
       <TitleBar />
-      <Menu data={menu} />
+      <StyledMenu data={menu} />
       <div className="window-content">
         {servers.length === 0 ? (
           <BBSWizard importProgress={importProgress} />

@@ -13,18 +13,17 @@ import {
 } from "react95";
 import * as styledComponents from "styled-components";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { TitleBar } from "./TitleBar";
-import "./PreferencesWindow.scss";
+import { StyledWindow } from "../../ui/StyledWindow/StyledWindow";
 import {
   FONT_SIZE_STORAGE_KEY,
   FONT_STORAGE_KEY,
   LOCALE_STORAGE_KEY,
   themeMap,
   themeNames,
-} from "../App";
+} from "../../App";
 import { useMemo, useState } from "react";
 
-export const PreferencesPage = (): React.ReactElement => {
+export const PreferencesWindow = (): React.ReactElement => {
   const [activeTab, setActiveTab] = useState("theme");
   const [previewTheme, setPreviewTheme] = useState(
     localStorage.getItem("qwk-fox.theme") ?? "original",
@@ -33,10 +32,7 @@ export const PreferencesPage = (): React.ReactElement => {
     localStorage.getItem(FONT_STORAGE_KEY) ?? "IBMVGA8, monospace",
   );
   const [fontSize, setFontSize] = useState(
-    Number.parseInt(
-      localStorage.getItem(FONT_SIZE_STORAGE_KEY) ?? "14",
-      10,
-    ),
+    Number.parseInt(localStorage.getItem(FONT_SIZE_STORAGE_KEY) ?? "14", 10),
   );
   const [locale, setLocale] = useState(
     localStorage.getItem(LOCALE_STORAGE_KEY) ?? "en-US",
@@ -104,20 +100,15 @@ export const PreferencesPage = (): React.ReactElement => {
     localStorage.setItem(LOCALE_STORAGE_KEY, locale);
   };
 
-
   return (
-    <div
-      className="preferences-window preferences-window-standalone"
-      style={{
-        background: selectedTheme.material,
-      }}
-    >
-      <div className="preferences-window-header">
-        <TitleBar title="Preferences" />
-      </div>
+    <StyledWindow title="Preferences">
       <div className="preferences-window-body">
         <ThemeProvider theme={selectedTheme}>
-          <Tabs value={activeTab} onChange={setActiveTab} className="preferences-tabs">
+          <Tabs
+            value={activeTab}
+            onChange={setActiveTab}
+            className="preferences-tabs"
+          >
             <Tab value="theme">Theme</Tab>
             <Tab value="fonts">Fonts</Tab>
             <Tab value="locale">International</Tab>
@@ -235,10 +226,17 @@ export const PreferencesPage = (): React.ReactElement => {
                       className="preferences-theme-preview-frame"
                     >
                       <div className="preferences-theme-preview-row">
-                        {new Date().toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })}
+                        {new Date().toLocaleDateString(locale, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
                       </div>
                       <div className="preferences-theme-preview-row">
-                        {new Date().toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
+                        {new Date().toLocaleTimeString(locale, {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </div>
                     </Frame>
                   </div>
@@ -247,10 +245,8 @@ export const PreferencesPage = (): React.ReactElement => {
             )}
           </TabBody>
         </ThemeProvider>
-        <div className="preferences-window-actions">
-          <Button onClick={() => getCurrentWindow().close()}>Close</Button>
-        </div>
+        <Button onClick={() => getCurrentWindow().close()}>Close</Button>
       </div>
-    </div>
+    </StyledWindow>
   );
 };
