@@ -16,14 +16,13 @@ import original from "react95/dist/themes/original";
 
 import { Theme } from "react95/dist/common/themes/types";
 import { ViewSettings } from "./AppSettings";
-import { Menu } from "./features/Menu";
-import { AboutPage } from "./features/AboutPage.tsx";
-import { PreferencesPage } from "./features/PreferencesPage.tsx";
-import { TitleBar } from "./features/TitleBar";
+import { AboutWindow } from "./features/windows/AboutWindow.tsx";
+import { PreferencesWindow } from "./features/windows/PreferencesWindow.tsx";
 import { GlobalStyles } from "./GlobalStyles";
 import { handleExitApp, importQWKFileToDB } from "./interop/Interop";
 
-import "./App.css";
+import "./App.scss";
+import { StyledWindow } from "./ui/StyledWindow/StyledWindow.tsx";
 
 export const themeNames = Object.keys(react95themes).filter(
   (name) => name !== "default",
@@ -137,7 +136,7 @@ function App() {
       });
     };
 
-    createOrShow("preferences", 640, 480);
+    createOrShow("preferences", 640, 400);
     createOrShow("about", 480, 320);
   }, [isPreferencesWindow, isAboutWindow]);
 
@@ -146,8 +145,8 @@ function App() {
       return;
     }
 
-    import("./features/PreferencesPage.tsx");
-    import("./features/AboutPage.tsx");
+    import("./features/windows/PreferencesWindow.tsx");
+    import("./features/windows/AboutWindow.tsx");
   }, [isPreferencesWindow, isAboutWindow]);
 
   useEffect(() => {
@@ -261,30 +260,11 @@ function App() {
     }
   }
 
-  if (isPreferencesWindow) {
+  const content = () => {
+    if (isPreferencesWindow) return <PreferencesWindow />;
+    if (isAboutWindow) return <AboutWindow />;
     return (
-      <ThemeProvider theme={currentTheme}>
-        <GlobalStyles theme={currentTheme} />
-        <PreferencesPage />
-      </ThemeProvider>
-    );
-  }
-
-  if (isAboutWindow) {
-    return (
-      <ThemeProvider theme={currentTheme}>
-        <GlobalStyles theme={currentTheme} />
-        <AboutPage />
-      </ThemeProvider>
-    );
-  }
-
-  return (
-    <ThemeProvider theme={currentTheme}>
-      <GlobalStyles theme={currentTheme} />
-      <TitleBar />
-      <Menu data={menu} />
-      <div className="window-content">
+      <StyledWindow title="QWK Fox" menuData={menu}>
         {servers.length === 0 ? (
           <BBSWizard importProgress={importProgress} />
         ) : (
@@ -296,7 +276,14 @@ function App() {
             importProgress={importProgress}
           />
         )}
-      </div>
+      </StyledWindow>
+    );
+  };
+
+  return (
+    <ThemeProvider theme={currentTheme}>
+      <GlobalStyles theme={currentTheme} />
+      {content()}
     </ThemeProvider>
   );
 }

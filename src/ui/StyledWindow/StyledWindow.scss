@@ -1,0 +1,10 @@
+.styledwindow-body {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  flex: 1 1 auto;
+  margin-top: 32px;
+  min-height: 0;
+  overflow: hidden;
+  height: 100%;
+}

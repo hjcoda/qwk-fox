@@ -1,7 +1,7 @@
 import { Button, Checkbox, MenuList, MenuListItem, Toolbar } from "react95";
-import useMultiMenuPosition from "../hooks/useMultiMenuPosition";
+import useMultiMenuPosition from "../../hooks/useMultiMenuPosition";
 
-import "./Menu.css";
+import "./StyledMenu.scss";
 
 type MenuItem = {
   checked?: boolean;
@@ -11,13 +11,15 @@ type MenuItem = {
   style?: React.CSSProperties;
 };
 
-type MenuProps = {
-  data: {
-    [key: string]: MenuItem[];
-  };
+export type MenuData = {
+  [key: string]: MenuItem[];
 };
 
-export const Menu = ({ data }: MenuProps) => {
+type MenuProps = {
+  data: MenuData;
+};
+
+export const StyledMenu = ({ data }: MenuProps) => {
   const {
     openMenu,
     closeMenu,
@@ -53,14 +55,8 @@ export const Menu = ({ data }: MenuProps) => {
         <MenuList
           className="menu-list"
           style={{
-            position: "fixed",
             top: menuPosition.top,
             left: menuPosition.left,
-            zIndex: 1000,
-            minWidth: "150px",
-            boxShadow: "2px 2px 0 rgba(0,0,0,0.15)",
-            maxHeight: "50vh",
-            overflowY: "auto",
           }}
         >
           {data[openMenu].map((item: MenuItem) => (

@@ -6,7 +6,6 @@
 }
 
 .menu-item {
-  padding: 0 !important;
   display: inline-flex;
   gap: 5px;
   height: 32px !important;
@@ -25,4 +24,15 @@
 
 .menu-item-icon label {
   display: block;
+}
+
+.menu-list {
+  margin: 0 !important;
+  padding: 1px !important;
+  position: fixed !important;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15) !important;
+  z-index: 1000;
+  min-width: 150px;
+  max-height: 50vh;
+  overflow-y: hidden;
 }

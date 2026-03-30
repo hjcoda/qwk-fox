@@ -1,5 +1,5 @@
 import { Message } from "../data/DTO";
-import "./MessageDetailSlug.css";
+import "./MessageDetailSlug.scss";
 
 type MessageDetailSlugProps = {
   message: Message | null;

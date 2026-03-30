@@ -1,5 +1,5 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import "./TitleBar.css";
+import "./TitleBar.scss";
 
 export const TitleBar = ({ title = "QWK Fox" }: { title?: string }) => {
   return (
