@@ -1,6 +1,6 @@
 // A 90s wizard for adding a subscription to a BBS
 // Should take login details, store them securely, add subscription to data
-import { ProgressBar } from "react95";
+import { GroupBox, ProgressBar } from "react95";
 
 // create folder for QWK archives, convert to SQLite for merging?
 export const BBSWizard = ({
@@ -14,8 +14,7 @@ export const BBSWizard = ({
   } | null;
 }) => {
   return (
-    <>
-      <h1>BBS Wizard</h1>
+    <GroupBox label="BBS Wizard">
       <p>{`It looks like you haven't set up any BBS subcriptions yet.`}</p>
       <p>{`To get started, import a QWK packet directly from the 'File' menu`}</p>
       {importProgress && (
@@ -24,6 +23,6 @@ export const BBSWizard = ({
           value={Math.floor(importProgress?.percent)}
         />
       )}
-    </>
+    </GroupBox>
   );
 };

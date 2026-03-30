@@ -2,6 +2,7 @@ import { Button, Frame, GroupBox } from "react95";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { StyledWindow } from "../../ui/StyledWindow/StyledWindow";
 import "./PreferencesWindow.scss";
+import "./AboutWindow.scss";
 
 export const AboutWindow = (): React.ReactElement => {
   return (

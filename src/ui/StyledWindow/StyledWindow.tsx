@@ -1,16 +1,19 @@
 import { TitleBar } from "../../features/TitleBar";
+import { MenuData, StyledMenu } from "../StyledMenu/StyledMenu";
 import "./StyledWindow.scss";
 
 type WindowProps = {
   title: string;
+  menuData?: MenuData;
   children: React.ReactNode;
 };
 
-export const StyledWindow = ({ title, children }: WindowProps) => {
+export const StyledWindow = ({ title, menuData, children }: WindowProps) => {
   return (
-    <div>
+    <>
       <TitleBar key="title" title={title} />
+      {menuData && <StyledMenu data={menuData} />}
       <div className="styledwindow-body">{children}</div>
-    </div>
+    </>
   );
 };

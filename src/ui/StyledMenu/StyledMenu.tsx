@@ -11,10 +11,12 @@ type MenuItem = {
   style?: React.CSSProperties;
 };
 
+export type MenuData = {
+  [key: string]: MenuItem[];
+};
+
 type MenuProps = {
-  data: {
-    [key: string]: MenuItem[];
-  };
+  data: MenuData;
 };
 
 export const StyledMenu = ({ data }: MenuProps) => {
@@ -53,14 +55,8 @@ export const StyledMenu = ({ data }: MenuProps) => {
         <MenuList
           className="menu-list"
           style={{
-            position: "fixed",
             top: menuPosition.top,
             left: menuPosition.left,
-            zIndex: 1000,
-            minWidth: "150px",
-            boxShadow: "2px 2px 0 rgba(0,0,0,0.15)",
-            maxHeight: "50vh",
-            overflowY: "auto",
           }}
         >
           {data[openMenu].map((item: MenuItem) => (
