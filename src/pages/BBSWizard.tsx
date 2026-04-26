@@ -14,7 +14,7 @@ export const BBSWizard = ({
   } | null;
 }) => {
   return (
-    <GroupBox label="BBS Wizard">
+    <GroupBox label="BBS Wizard" className="expand-contents">
       <p>{`It looks like you haven't set up any BBS subcriptions yet.`}</p>
       <p>{`To get started, import a QWK packet directly from the 'File' menu`}</p>
       {importProgress && (
