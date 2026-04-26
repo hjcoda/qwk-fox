@@ -112,7 +112,7 @@ export const ConferenceList = memo(
         onFocusUpdate={(focus) => setIsFocused(focus)}
       >
         {columns.map((col) => {
-          const { label, key, dataKey, ...rest } = col;
+          const { label, dataKey, ...rest } = col;
           return (
             <Column {...rest}>
               <HeaderCell>{label}</HeaderCell>

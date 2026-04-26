@@ -1,7 +1,15 @@
-const SynchronetKludges = ["@VIA", "@MSGID", "@REPLY", "@TZ"] as const;
-type SynchronetKludge = (typeof SynchronetKludges)[number];
+const MessageExtensions = [
+  "@VIA",
+  "@MSGID",
+  "@REPLY",
+  "@TZ",
+  "Subject",
+  "From",
+  "To",
+] as const;
+type MessageExtension = (typeof MessageExtensions)[number];
 
-export type MessageExtensions = {
+export type MessageExtensionResults = {
   firstLineOfMessageText: number;
   subject?: string;
   "@VIA"?: string;
@@ -10,16 +18,19 @@ export type MessageExtensions = {
   "@TZ"?: string;
   "Re:"?: string;
   "By:"?: string;
+  Subject?: string;
+  From?: string;
+  To?: string;
 };
 
-const processKludge = (
+const processExtension = (
   line: string,
-): { key: SynchronetKludge; value: string } | null => {
-  for (const keyIndex in SynchronetKludges) {
-    const key = SynchronetKludges[keyIndex];
+): { key: MessageExtension; value: string } | null => {
+  for (const keyIndex in MessageExtensions) {
+    const key = MessageExtensions[keyIndex];
     if (line.startsWith(key)) {
       const value = line.slice(key.length);
-      return { key: key as SynchronetKludge, value };
+      return { key: key as MessageExtension, value };
     }
   }
 
@@ -29,25 +40,29 @@ const processKludge = (
 /** Extract Kludge lines and extensions from the message if present */
 export const extractMessageExtensions = (
   ansiString: string,
-): MessageExtensions => {
-  let messageExtensions: MessageExtensions = { firstLineOfMessageText: 0 };
+): MessageExtensionResults => {
+  let messageExtensionResults: MessageExtensionResults = {
+    firstLineOfMessageText: 0,
+  };
   const lines = ansiString.split(/\r?\n/);
-  if (lines[0].startsWith("Subject")) {
-    messageExtensions.subject = lines[0].slice("Subject".length).trim();
-    messageExtensions.firstLineOfMessageText++;
-  }
 
-  let currentLine = lines[messageExtensions.firstLineOfMessageText];
-  let kludge = currentLine ? processKludge(currentLine) : null;
+  // if (lines.find((line) => line.startsWith("Subject:")))
+  //   if (lines[0].startsWith("Subject")) {
+  //     messageExtensionResults.subject = lines[0].slice("Subject".length).trim();
+  //     messageExtensionResults.firstLineOfMessageText++;
+  //   }
+
+  let currentLine = lines[messageExtensionResults.firstLineOfMessageText];
+  let kludge = currentLine ? processExtension(currentLine) : null;
   while (kludge !== null) {
     if (kludge) {
       const { key, value } = kludge;
-      messageExtensions[key] = value;
-      messageExtensions.firstLineOfMessageText++;
+      messageExtensionResults[key] = value;
+      messageExtensionResults.firstLineOfMessageText++;
     }
-    currentLine = lines[messageExtensions.firstLineOfMessageText];
-    kludge = currentLine ? processKludge(currentLine) : null;
+    currentLine = lines[messageExtensionResults.firstLineOfMessageText];
+    kludge = currentLine ? processExtension(currentLine) : null;
   }
 
-  return messageExtensions;
+  return messageExtensionResults;
 };

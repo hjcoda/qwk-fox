@@ -10,7 +10,7 @@ import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
 import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSortedData } from "../hooks/useSortedData";
 import { StyledTable } from "../ui/StyledTable/StyledTable";
 import { formatDate } from "../data/DateTimeFormat";
@@ -41,71 +41,67 @@ export const MessageTree = ({
       : filterMessages(messages, { hideRead });
   }, [messages, useThreads, hideRead]);
 
-  const handleSortColumn = (
-    sortColumn: string | undefined,
-    sortType: SortType | undefined,
-  ) => {
-    setSortColumn(sortColumn);
-    setSortType(sortType);
+  const sortedData = useSortedData<TreeNode>(data, {
+    key: sortColumn,
+    direction: sortType,
+  });
+
+  const getRowClassName = (rowData: Message) => {
+    const classNames = ["row"];
+    if (rowData.msg_id === selectedIndex) {
+      classNames.push(
+        isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
+      );
+    }
+    if (!MessageIsRead(rowData.type_id)) {
+      classNames.push("bold");
+    }
+    return classNames.join(" ");
   };
 
-  const MessageCell = useCallback(
-    ({
-      rowData,
-      dataKey,
-      ...rest
-    }: {
-      rowData?: Message;
-      dataKey: keyof Message;
-      children?: (rowData: Message) => string;
-    }) => {
-      if (rowData) {
-        const classNames = ["row"];
-        if (rowData.msg_id === selectedIndex) {
-          classNames.push(
-            isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
-          );
-        }
-        if (!MessageIsRead(rowData.type_id)) {
-          classNames.push("bold");
-        }
-        return (
-          <Cell className={classNames.join(" ")} rowData={rowData} {...rest}>
-            {String(rowData[dataKey] ?? "")}
-          </Cell>
-        );
-      }
-    },
-    [selectedIndex, isFocused],
-  );
+  const MessageCell = ({
+    rowData,
+    dataKey,
+    children,
+    ...rest
+  }: {
+    rowData?: Message;
+    dataKey: keyof Message;
+    children?: (rowData: Message) => string;
+  }) => {
+    if (!rowData) return null;
+    return (
+      <Cell className={getRowClassName(rowData)} rowData={rowData} {...rest}>
+        {children ? children(rowData) : String(rowData[dataKey] ?? "")}
+      </Cell>
+    );
+  };
 
   return (
     <StyledTable
       sortColumn={sortColumn}
       sortType={sortType}
-      onSortColumn={handleSortColumn}
+      onSortColumn={(column, type) => {
+        setSortColumn(column);
+        setSortType(type);
+      }}
       isTree={useThreads}
       virtualized
       expandedRowKeys={expandedRowKeys}
       defaultExpandAllRows={false}
       cellBordered
       rowKey="msg_id"
-      data={useSortedData<TreeNode>(data, {
-        key: sortColumn,
-        direction: sortType,
-      })}
+      data={sortedData}
       fillHeight
       shouldUpdateScroll={false}
       scrollToTopKey={scrollToTopKey}
       onSelectedIndexChanged={(index) => {
         setSelectedIndex(index);
-        setExpandedRowKeys((prevKeys) => {
-          if (prevKeys.includes(index)) {
-            return prevKeys.filter((key) => key !== index);
-          } else {
-            return [...prevKeys, index];
-          }
-        });
+        setExpandedRowKeys((prevKeys) =>
+          prevKeys.includes(index)
+            ? prevKeys.filter((key) => key !== index)
+            : [...prevKeys, index],
+        );
         onSelectedMessageChanged(index);
       }}
       onFocusUpdate={(focus) => setIsFocused(focus)}
@@ -118,7 +114,7 @@ export const MessageTree = ({
         <HeaderCell>From</HeaderCell>
         <MessageCell dataKey="from" />
       </Column>
-      <Column flexGrow={1} sortable>
+      <Column width={300} sortable>
         <HeaderCell>Date</HeaderCell>
         <MessageCell dataKey="date">
           {(rowData: Message) => {

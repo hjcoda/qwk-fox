@@ -40,7 +40,7 @@ const decodeUtf8 = (bytes: Uint8Array): string | null => {
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
     return decoder.decode(bytes);
-  } catch (err) {
+  } catch {
     return null;
   }
 };

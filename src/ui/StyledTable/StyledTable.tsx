@@ -9,7 +9,7 @@ import {
 } from "rsuite";
 
 export const StyledTable = <
-  Row extends RowDataType<any>,
+  Row extends RowDataType<unknown>,
   Key extends RowKeyType,
 >(
   props: TableProps<Row, Key> &
@@ -20,40 +20,9 @@ export const StyledTable = <
       scrollToTopKey?: string | number | null;
     },
 ) => {
-  const tableContainerRef = useRef<HTMLTableRowElement | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement | null>(null);
   const tableRef = useRef<TableInstance<Row, Key> | null>(null);
 
-  const handleFocus = () => {
-    props.onFocusUpdate(true);
-  };
-
-  // Check if the related target (element gaining focus) is outside our table
-  const handleBlur = (event: FocusEvent) => {
-    const relatedTarget = event.relatedTarget as Node;
-    if (
-      tableContainerRef.current &&
-      !tableContainerRef.current.contains(relatedTarget)
-    ) {
-      props.onFocusUpdate(false);
-    }
-  };
-
-  // Focus management effect
-  useEffect(() => {
-    const container = tableContainerRef.current;
-    if (container) {
-      container.addEventListener("focus", handleFocus);
-      container.addEventListener("blur", handleBlur);
-
-      // Make the container focusable
-      container.tabIndex = -1;
-
-      return () => {
-        container.removeEventListener("focus", handleFocus);
-        container.removeEventListener("blur", handleBlur);
-      };
-    }
-  }, []);
 
   useEffect(() => {
     if (props.scrollToTopKey === undefined) {
@@ -65,10 +34,28 @@ export const StyledTable = <
   }, [props.scrollToTopKey]);
 
   return (
-    <Frame variant="field" ref={tableContainerRef} style={{ width: "100%" }}>
+    <Frame
+      variant="field"
+      ref={tableContainerRef}
+      style={{ width: "100%", padding: "1.5px" }}
+      tabIndex={-1}
+      onFocus={() => props.onFocusUpdate(true)}
+      onBlur={(event) => {
+        const nextTarget = event.relatedTarget as Node | null;
+        if (
+          tableContainerRef.current &&
+          nextTarget &&
+          tableContainerRef.current.contains(nextTarget)
+        ) {
+          return;
+        }
+        props.onFocusUpdate(false);
+      }}
+    >
       <Table
         ref={tableRef}
         locale={{ emptyMessage: "" }}
+        style={{ width: "100%" }}
         fillHeight
         rowHeight={30}
         onRowClick={(row) => {
