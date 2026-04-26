@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { Frame } from "react95";
-import { Message } from "../data/DTO";
-import { extractMessageExtensions } from "../data/MessageExtensionUtils";
+import { Message } from "../../data/DTO";
+import { extractMessageExtensions } from "../../data/MessageExtensionUtils";
 import { MessageDetailSlug } from "./MessageDetailSlug";
-import "./MessageTextBox.scss";
-import { ANSIRenderer } from "../ui/ANSIRenderer/ANSIRenderer";
-import { decodeMessageBytes } from "../ui/ANSIRenderer/MessageDecode";
-import { FONT_SIZE_STORAGE_KEY, FONT_STORAGE_KEY } from "../App";
+import "./MessageDisplay.scss";
+import { ANSIRenderer } from "../../ui/ANSIRenderer/ANSIRenderer";
+import { decodeMessageBytes } from "../../ui/ANSIRenderer/MessageDecode";
+import { FONT_SIZE_STORAGE_KEY, FONT_STORAGE_KEY } from "../../App";
 
 type MessageTextBoxProps = {
   message: Message | null;
@@ -63,7 +63,7 @@ const wrapTextByWords = (text: string, width?: number): string => {
   return wrappedLines.join("\r\n");
 };
 
-export const MessageTextBox = ({
+export const MessageDisplay = ({
   message,
   messageBytes,
   encodingHint,

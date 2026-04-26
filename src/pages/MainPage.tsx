@@ -4,13 +4,13 @@ import { Pane, SplitPane } from "react-split-pane";
 import { GroupBox } from "react95";
 import { AppSettings } from "../AppSettings";
 import { Conference, Message, MessageStatusEnum, Server } from "../data/DTO";
-import { ConferenceList } from "../features/ConferenceList";
-import { IconServerList } from "../features/IconServerList";
-import { MessageTextBox } from "../features/MessageTextBox";
+import { ConferenceList } from "../features/conferencelist/ConferenceList";
+import { IconServerList } from "../features/iconserverlist/IconServerList";
+import { MessageDisplay } from "../features/messagedisplay/MessageDisplay";
 import { useTauriEvent } from "../hooks/useTauriEvent";
-import { StatusBar } from "../features/StatusBar";
+import { StatusBar } from "../features/statusbar/StatusBar";
 import { enhanceMessages, getReadMessageStatus } from "../data/MessageUtils";
-import { MessageTree } from "../features/MessageTree";
+import { MessageTree } from "../features/messagetree/MessageTree";
 
 type UpdateMessagesPayload = {
   bbs_id: string;
@@ -184,9 +184,11 @@ export const MainPage = ({
         </Pane>
         <Pane className="expand-contents">
           <GroupBox label={"Message"} className={"padded expand-contents"}>
-            <MessageTextBox
+            <MessageDisplay
               message={message}
-              constrainColumns={appSettings.viewSettings.constrainMessageColumns}
+              constrainColumns={
+                appSettings.viewSettings.constrainMessageColumns
+              }
             />
           </GroupBox>
         </Pane>

@@ -1,19 +1,19 @@
 import { SortType } from "rsuite";
-import { Message } from "../data/DTO";
+import { Message } from "../../data/DTO";
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
 import {
   buildMessageTree,
   filterMessages,
   MessageIsRead,
-} from "../data/MessageUtils";
+} from "../../data/MessageUtils";
 import Column from "rsuite/esm/Table/TableColumn";
 import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
 import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
 import { useMemo, useState } from "react";
-import { useSortedData } from "../hooks/useSortedData";
-import { StyledTable } from "../ui/StyledTable/StyledTable";
-import { formatDate } from "../data/DateTimeFormat";
+import { useSortedData } from "../../hooks/useSortedData";
+import { StyledTable } from "../../ui/StyledTable/StyledTable";
+import { formatDate } from "../../data/DateTimeFormat";
 
 export const MessageTree = ({
   hideRead,

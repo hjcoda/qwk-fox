@@ -1,4 +1,4 @@
-import { TitleBar } from "../../features/TitleBar";
+import { TitleBar } from "../../features/titlebar/TitleBar";
 import { MenuData, StyledMenu } from "../StyledMenu/StyledMenu";
 import "./StyledWindow.scss";
 

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
-import { MessageTextBox } from "./MessageTextBox";
-import { Message, MessageStatusEnum } from "../data/DTO";
+import { MessageDisplay } from "./MessageDisplay";
+import { Message, MessageStatusEnum } from "../../data/DTO";
 
 const baseHeader = {
   section: 1,
@@ -30,8 +30,8 @@ const asciiBytes = (input: string) =>
 const utf8Bytes = (input: string) => new TextEncoder().encode(input);
 
 const cp437BoxBytes = Uint8Array.from([
-  0xda, 0xc4, 0xc4, 0xc4, 0xbf, 0x0d, 0x0a, 0xb3, 0x20, 0xfe, 0x20, 0xb3,
-  0x0d, 0x0a, 0xc0, 0xc4, 0xc4, 0xc4, 0xd9,
+  0xda, 0xc4, 0xc4, 0xc4, 0xbf, 0x0d, 0x0a, 0xb3, 0x20, 0xfe, 0x20, 0xb3, 0x0d,
+  0x0a, 0xc0, 0xc4, 0xc4, 0xc4, 0xd9,
 ]);
 
 const ansiColorBytes = asciiBytes(
@@ -44,9 +44,9 @@ const ansiCursorBytes = asciiBytes(
 
 const spinnerFrames = ["-", "\\", "|", "/"];
 
-const meta: Meta<typeof MessageTextBox> = {
-  title: "Features/MessageTextBox",
-  component: MessageTextBox,
+const meta: Meta<typeof MessageDisplay> = {
+  title: "Features/MessageDisplay",
+  component: MessageDisplay,
   args: {
     message: baseMessage,
   },
@@ -57,7 +57,7 @@ const meta: Meta<typeof MessageTextBox> = {
 
 export default meta;
 
-type Story = StoryObj<typeof MessageTextBox>;
+type Story = StoryObj<typeof MessageDisplay>;
 
 export const AnsiColorsAndCursor: Story = {
   args: {
@@ -65,10 +65,7 @@ export const AnsiColorsAndCursor: Story = {
       ...baseMessage,
       subject: "ANSI Colors + Cursor",
     },
-    messageBytes: Uint8Array.from([
-      ...ansiColorBytes,
-      ...ansiCursorBytes,
-    ]),
+    messageBytes: Uint8Array.from([...ansiColorBytes, ...ansiCursorBytes]),
   },
 };
 
@@ -124,12 +121,7 @@ export const AnimatedAnsiSpinner: Story = {
       `\x1b[36mLoading\x1b[0m ${spinnerFrames[frame]}\r\n` +
       "\x1b[33mPress any key to continue...\x1b[0m\r\n";
 
-    return (
-      <MessageTextBox
-        {...args}
-        messageBytes={asciiBytes(output)}
-      />
-    );
+    return <MessageDisplay {...args} messageBytes={asciiBytes(output)} />;
   },
   args: {
     message: {

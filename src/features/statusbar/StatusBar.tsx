@@ -1,5 +1,5 @@
 import { Frame, ProgressBar } from "react95";
-import { Server } from "../data/DTO";
+import { Server } from "../../data/DTO";
 
 import "./StatusBar.scss";
 

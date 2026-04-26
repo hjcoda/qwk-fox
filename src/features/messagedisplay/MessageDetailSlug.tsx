@@ -1,4 +1,4 @@
-import { Message } from "../data/DTO";
+import { Message } from "../../data/DTO";
 import "./MessageDetailSlug.scss";
 
 type MessageDetailSlugProps = {
