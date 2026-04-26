@@ -13,6 +13,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 };
 
 const YYYYMMDDRegex = /\d{4}-[01]\d-[0-3]\d/;
+const MMDDYYYRegex = /[01]\d-[0-3]\d-\d{4}/;
 
 const parseMMDDYYYY = (dateString: string): Date => {
   console.log(`Parsing date ${dateString}`);
@@ -30,12 +31,18 @@ const validDate = (date: string): boolean => {
 // Format the date
 export const formatDate = (date: string): string => {
   let options = dateTimeOptions;
-  const inputDate = "" + date;
-  // Y2K bug, we meet again! Expand dates to likely 4-digit equivalent.
 
-  if (!YYYYMMDDRegex.test(date)) {
+  if (MMDDYYYRegex.test(date)) {
+    const mmddyyyy = parseMMDDYYYY(date);
+    if (validDate(mmddyyyy.toISOString())) {
+      date = mmddyyyy.toISOString();
+      options = dateOptions;
+    }
+  } else if (!YYYYMMDDRegex.test(date)) {
     const segments = date.split("-");
     const year = Number(segments[segments.length - 1]);
+
+    // Y2K bug, we meet again! Expand dates to likely 4-digit equivalent.
     if (!isNaN(year) && year < 100) {
       if (year <= 70) {
         segments[segments.length - 1] = `${2000 + year}`;
@@ -44,21 +51,12 @@ export const formatDate = (date: string): string => {
       }
       date = segments.join("-");
     }
-
-    // If the time is missing just return the date
-    if (!validDate(date)) {
-      const mmddyyyy = parseMMDDYYYY(date);
-      if (validDate(mmddyyyy.toISOString())) {
-        date = mmddyyyy.toISOString();
-        options = dateOptions;
-      }
-    }
   }
 
   const locale = localStorage.getItem("qwk-fox.locale") ?? "en-US";
   const outDate = new Intl.DateTimeFormat(locale, options).format(
     new Date(date),
   );
-  console.log(`Converted ${inputDate} to ${outDate}`);
+
   return outDate;
 };
