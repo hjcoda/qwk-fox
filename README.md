@@ -26,3 +26,10 @@ WEBKIT_DISABLE_DMABUF_RENDERER=1 npm run tauri dev
 - Rustup - Visual Studio Community
 - Visual Studio Community - Modify - Add Desktop C++
 - Install strawberry perl - https://strawberryperl.com/
+
+### Building locally on Arch Linux
+
+cd src-tauri
+cargo clean
+cd ..
+NO_STRIP=true cargo tauri build --verbose
