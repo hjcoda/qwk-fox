@@ -1,7 +1,7 @@
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { useMemo } from "react";
 import { Server } from "../../data/DTO";
 import { IconChain } from "../../ui/IconChain/IconChain";
+import serverIcon from "../../assets/server.png";
 
 export const IconServerList = ({
   servers,
@@ -17,7 +17,7 @@ export const IconServerList = ({
       const { bbs_name, user_name } = s;
       return {
         title: bbs_name,
-        iconSrc: convertFileSrc("assets/server.png"),
+        iconSrc: serverIcon,
         tooltip: `${bbs_name} - ${user_name}`,
         index: s.bbs_id,
         disabled: false,
