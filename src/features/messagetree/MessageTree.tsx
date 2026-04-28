@@ -6,13 +6,10 @@ import {
   filterMessages,
   MessageIsRead,
 } from "../../data/MessageUtils";
-import Column from "rsuite/esm/Table/TableColumn";
-import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
-import Cell from "rsuite/esm/Table/TableCell";
 import "rsuite/dist/rsuite.css";
 import { useMemo, useState } from "react";
 import { useSortedData } from "../../hooks/useSortedData";
-import { StyledTable } from "../../ui/StyledTable/StyledTable";
+import { SVARTable } from "../../ui/SVARTable/SVARTable";
 import { formatDate } from "../../data/DateTimeFormat";
 
 export const MessageTree = ({
@@ -46,46 +43,33 @@ export const MessageTree = ({
     direction: sortType,
   });
 
-  const getRowClassName = (rowData: Message) => {
-    const classNames = ["row"];
-    if (rowData.msg_id === selectedIndex) {
-      classNames.push(
-        isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
-      );
-    }
-    if (!MessageIsRead(rowData.type_id)) {
-      classNames.push("bold");
-    }
-    return classNames.join(" ");
-  };
-
-  const MessageCell = ({
-    rowData,
-    dataKey,
-    children,
-    ...rest
-  }: {
-    rowData?: Message;
-    dataKey: keyof Message;
-    children?: (rowData: Message) => string;
-  }) => {
-    if (!rowData) return null;
+  function MessageCell({ row }: { row: Message }) {
+    const dateStr = row?.dateToFormat ?? row?.date;
+    if (!dateStr) return <div></div>;
     return (
-      <Cell className={getRowClassName(rowData)} rowData={rowData} {...rest}>
-        {children ? children(rowData) : String(rowData[dataKey] ?? "")}
-      </Cell>
+      <div>
+        <span>{formatDate(dateStr)}</span>
+        <i className="wxi-check" />
+      </div>
     );
-  };
+  }
+
+  const columns = [
+    { id: "subject", header: "Subject", flexgrow: 2, treetoggle: useThreads },
+    { id: "from", header: "From", flexgrow: 1 },
+    { id: "date", cell: MessageCell, header: "Date", flexgrow: 2 },
+  ];
 
   return (
-    <StyledTable
+    <SVARTable
+      columns={columns}
       sortColumn={sortColumn}
       sortType={sortType}
       onSortColumn={(column, type) => {
         setSortColumn(column);
         setSortType(type);
       }}
-      isTree={useThreads}
+      tree={useThreads}
       virtualized
       expandedRowKeys={expandedRowKeys}
       defaultExpandAllRows={false}
@@ -105,25 +89,6 @@ export const MessageTree = ({
         onSelectedMessageChanged(index);
       }}
       onFocusUpdate={(focus) => setIsFocused(focus)}
-    >
-      <Column flexGrow={1} sortable>
-        <HeaderCell>Subject</HeaderCell>
-        <MessageCell dataKey="subject" />
-      </Column>
-      <Column width={150} sortable>
-        <HeaderCell>From</HeaderCell>
-        <MessageCell dataKey="from" />
-      </Column>
-      <Column width={300} sortable>
-        <HeaderCell>Date</HeaderCell>
-        <MessageCell dataKey="date">
-          {(rowData: Message) => {
-            const msg = rowData as Message;
-            const dateStr = msg.dateToFormat ?? msg.date;
-            return formatDate(dateStr);
-          }}
-        </MessageCell>
-      </Column>
-    </StyledTable>
+    ></SVARTable>
   );
 };

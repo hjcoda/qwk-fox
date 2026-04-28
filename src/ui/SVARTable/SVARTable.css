@@ -1,0 +1,17 @@
+.wx-table-tree-toggle.wxi-menu-down {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(25% 25%, 75% 25%, 50% 75%);
+}
+
+.wx-table-tree-toggle.wxi-menu-right {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(25% 25%, 25% 75%, 75% 50%);
+}
+
+.wx-row {
+  cursor: default;
+}

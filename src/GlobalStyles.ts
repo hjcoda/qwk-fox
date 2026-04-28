@@ -44,8 +44,16 @@ export const GlobalStyles = createGlobalStyle`
     --table-highlight-border: ${({ theme }: { theme: Theme }) => theme.materialText};
     --table-highlight-unfocused-bg: ${({ theme }: { theme: Theme }) => theme.material};
     --table-highlight-unfocused-border: ${({ theme }: { theme: Theme }) => theme.hoverBackground};
-    
+        
     --messagebox-bg: ${({ theme }: { theme: Theme }) => theme.canvas};
     --messagebox-text: ${({ theme }: { theme: Theme }) => theme.canvasText};
+
+    --wx-table-header-border: ${({ theme }: { theme: Theme }) => theme.materialText};
+    --wx-table-header-color: ${({ theme }: { theme: Theme }) => theme.materialText};
+    --wx-table-header-background: ${({ theme }: { theme: Theme }) => theme.material};
+
+    --wx-table-select-border: ${({ theme }: { theme: Theme }) => theme.materialText};
+    --wx-table-select-color: ${({ theme }: { theme: Theme }) => theme.canvasTextInvert};
+    --wx-table-select-background: ${({ theme }: { theme: Theme }) => theme.hoverBackground};
   }
 `;

@@ -62,10 +62,10 @@ export const buildMessageTree = (messages: Message[]): TreeNode[] => {
       // This node has a parent
       const parentNode = nodeMap.get(message.in_reply_to);
       if (parentNode) {
-        if (!parentNode.children) {
-          parentNode.children = [];
+        if (!parentNode.data) {
+          parentNode.data = [];
         }
-        parentNode.children.push(currentNode);
+        parentNode.data.push(currentNode);
       } else {
         // Handle case where parent doesn't exist (orphaned node)
         // console.warn(
@@ -93,7 +93,11 @@ export const filterMessages = (
 
 export const enhanceMessages = (messages: Message[]): Message[] => {
   return messages.map((m) => {
-    const enhanced = { ...m, subject: m.header?.subject ?? m.subject };
+    const enhanced = {
+      id: m.msg_id,
+      ...m,
+      subject: m.header?.subject ?? m.subject,
+    };
     if (m.header) {
       enhanced.dateToFormat = m.header.when_written ?? m.date;
     } else {
