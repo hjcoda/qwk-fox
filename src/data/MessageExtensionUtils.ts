@@ -3,9 +3,6 @@ const MessageExtensions = [
   "@MSGID",
   "@REPLY",
   "@TZ",
-  "Subject",
-  "From",
-  "To",
 ] as const;
 type MessageExtension = (typeof MessageExtensions)[number];
 
@@ -18,9 +15,6 @@ export type MessageExtensionResults = {
   "@TZ"?: string;
   "Re:"?: string;
   "By:"?: string;
-  Subject?: string;
-  From?: string;
-  To?: string;
 };
 
 const processExtension = (
@@ -46,11 +40,10 @@ export const extractMessageExtensions = (
   };
   const lines = ansiString.split(/\r?\n/);
 
-  // if (lines.find((line) => line.startsWith("Subject:")))
-  //   if (lines[0].startsWith("Subject")) {
-  //     messageExtensionResults.subject = lines[0].slice("Subject".length).trim();
-  //     messageExtensionResults.firstLineOfMessageText++;
-  //   }
+  if (lines[0]?.startsWith("Subject")) {
+    messageExtensionResults.subject = lines[0].slice("Subject".length).trim();
+    messageExtensionResults.firstLineOfMessageText++;
+  }
 
   let currentLine = lines[messageExtensionResults.firstLineOfMessageText];
   let kludge = currentLine ? processExtension(currentLine) : null;

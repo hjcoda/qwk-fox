@@ -59,8 +59,9 @@ export const StyledMenu = ({ data }: MenuProps) => {
             left: menuPosition.left,
           }}
         >
-          {data[openMenu].map((item: MenuItem) => (
+          {data[openMenu].map((item: MenuItem, index: number) => (
             <MenuListItem
+              key={`${openMenu}-${item.text}-${index}`}
               className="menu-item"
               style={item.style}
               onClick={() => {

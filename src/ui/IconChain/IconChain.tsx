@@ -31,6 +31,7 @@ export const IconChain = ({
         {data.map((item) => {
           const { index, iconSrc, title, tooltip, disabled } = item;
           const classNames = ["icon"];
+          const tooltipId = `icon-${index}`;
           if (selectedIndex === index) {
             classNames.push("selected");
           }
@@ -38,10 +39,10 @@ export const IconChain = ({
             classNames.push("disabled");
           }
           return (
-            <>
+            <div key={index}>
               <div
                 className={classNames.join(" ")}
-                id={title}
+                id={tooltipId}
                 onClick={() => onSelectedIndexChanged(index)}
               >
                 <img src={iconSrc} width={64} height={64} alt={title} />
@@ -49,10 +50,10 @@ export const IconChain = ({
               </div>
               <Tooltip
                 className="on-top"
-                anchorSelect={`#${title}`}
+                anchorSelect={`#${tooltipId}`}
                 content={tooltip}
               />
-            </>
+            </div>
           );
         })}
       </div>

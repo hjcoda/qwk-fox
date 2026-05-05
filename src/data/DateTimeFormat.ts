@@ -13,13 +13,12 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 };
 
 const YYYYMMDDRegex = /\d{4}-[01]\d-[0-3]\d/;
-const MMDDYYYRegex = /[01]\d-[0-3]\d-\d{4}/;
+const MMDDYYYYRegex = /[01]\d-[0-3]\d-\d{4}/;
 
 const parseMMDDYYYY = (dateString: string): Date => {
-  console.log(`Parsing date ${dateString}`);
   const parts = dateString.split("-");
-  const day = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1; // Months are 0-indexed in JS
+  const month = parseInt(parts[0], 10) - 1; // Months are 0-indexed in JS
+  const day = parseInt(parts[1], 10);
   const year = parseInt(parts[2], 10);
   return new Date(year, month, day);
 };
@@ -32,7 +31,7 @@ const validDate = (date: string): boolean => {
 export const formatDate = (date: string): string => {
   let options = dateTimeOptions;
 
-  if (MMDDYYYRegex.test(date)) {
+  if (MMDDYYYYRegex.test(date)) {
     const mmddyyyy = parseMMDDYYYY(date);
     if (validDate(mmddyyyy.toISOString())) {
       date = mmddyyyy.toISOString();

@@ -1,11 +1,7 @@
 import { SortType } from "rsuite";
 import { Message } from "../../data/DTO";
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
-import {
-  buildMessageTree,
-  filterMessages,
-  MessageIsRead,
-} from "../../data/MessageUtils";
+import { buildMessageTree, filterMessages } from "../../data/MessageUtils";
 import "rsuite/dist/rsuite.css";
 import { useMemo, useState } from "react";
 import { useSortedData } from "../../hooks/useSortedData";
@@ -76,6 +72,8 @@ export const MessageTree = ({
       cellBordered
       rowKey="msg_id"
       data={sortedData}
+      selectedIndex={selectedIndex}
+      isFocused={isFocused}
       fillHeight
       shouldUpdateScroll={false}
       scrollToTopKey={scrollToTopKey}
