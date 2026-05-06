@@ -1,34 +1,7 @@
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Conference } from "../../data/DTO";
-import Column from "rsuite/esm/Table/TableColumn";
-import HeaderCell from "rsuite/esm/Table/TableHeaderCell";
-import { StyledTable } from "../../ui/StyledTable/StyledTable";
-import Cell from "rsuite/esm/Table/TableCell";
-
-type ConferenceDisplay = {
-  id: number;
-  title: string;
-  message_count: number;
-  unread_count: number;
-};
-
-const ID_Column = {
-  key: "id",
-  dataKey: "id" as keyof ConferenceDisplay,
-  label: "Id",
-  fixed: true,
-  width: 80,
-};
-
-const Title_Column = {
-  key: "title",
-  label: "Title",
-  dataKey: "title" as keyof ConferenceDisplay,
-  fixed: true,
-  flexGrow: 1,
-};
-
-const defaultColumns = [ID_Column, Title_Column];
+import { SVARTable } from "../../ui/SVARTable/SVARTable";
+import { IColumnConfig } from "@svar-ui/react-grid";
 
 export const ConferenceList = memo(
   ({
@@ -42,13 +15,8 @@ export const ConferenceList = memo(
     hideEmptyConferences: boolean;
     onSelectedConferenceChanged: (index: number) => void;
   }): React.ReactElement => {
-    const [isFocused, setIsFocused] = useState(false);
-    const [selectedIndex, setSelectedIndex] = useState<number>();
-    const [columnKeys] = useState(["title"]);
-
-    const columns = defaultColumns.filter((column) =>
-      columnKeys.some((key) => key === column.key),
-    );
+    const [_isFocused, setIsFocused] = useState(false);
+    const [_selectedIndex, setSelectedIndex] = useState<number>();
 
     useEffect(() => {
       setSelectedIndex(undefined);
@@ -70,37 +38,42 @@ export const ConferenceList = memo(
       );
     }, [conferences, hideEmptyConferences]);
 
-    const StyledCell = useCallback(
-      ({
-        rowData,
-        dataKey,
-        ...rest
-      }: {
-        rowData?: ConferenceDisplay;
-        dataKey: keyof ConferenceDisplay;
-      }) => {
-        if (rowData) {
-          const classNames = ["row"];
-          if (rowData.id === selectedIndex) {
-            classNames.push(
-              isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
-            );
-          }
-          if (rowData.unread_count > 0) {
-            classNames.push("bold");
-          }
-          return (
-            <Cell className={classNames.join(" ")} rowData={rowData} {...rest}>
-              {rowData[dataKey]}
-            </Cell>
-          );
-        }
-      },
-      [selectedIndex, isFocused],
+    const columns: IColumnConfig[] = useMemo(
+      () => [
+        {
+          id: "id",
+          header: "ID",
+          flexgrow: 1,
+          sort: true,
+          hidden: true,
+        },
+        {
+          id: "title",
+          header: "Title",
+          flexgrow: 2,
+          sort: true,
+        },
+        {
+          id: "message_count",
+          header: "Message Count",
+          flexgrow: 1,
+          sort: true,
+          hidden: true,
+        },
+        {
+          id: "unread_count",
+          header: "Unread Count",
+          flexgrow: 1,
+          sort: true,
+          hidden: true,
+        },
+      ],
+      [],
     );
 
     return (
-      <StyledTable
+      <SVARTable
+        columns={columns}
         showHeader={columns.length > 1}
         rowKey="index"
         fillHeight
@@ -110,17 +83,7 @@ export const ConferenceList = memo(
           onSelectedConferenceChanged(index);
         }}
         onFocusUpdate={(focus) => setIsFocused(focus)}
-      >
-        {columns.map((col) => {
-          const { label, dataKey, ...rest } = col;
-          return (
-            <Column {...rest}>
-              <HeaderCell>{label}</HeaderCell>
-              <StyledCell dataKey={dataKey} />
-            </Column>
-          );
-        })}
-      </StyledTable>
+      />
     );
   },
 );

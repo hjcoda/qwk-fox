@@ -3,17 +3,10 @@ import "@svar-ui/react-grid/all.css";
 import "./SVARTable.css";
 import { useEffect, useRef } from "react";
 import { Frame } from "react95";
-import { MessageIsRead } from "../../data/MessageUtils";
-import { MessageStatusEnum } from "../../data/DTO";
 
 type SVARTableRow = Record<string, unknown> & {
   id?: string | number;
   [key: string]: unknown;
-};
-
-type SVARTableColumn = IColumnConfig & {
-  id?: string;
-  cell?: (props: { row: SVARTableRow }) => React.ReactNode;
 };
 
 type SVARTableProps = {
@@ -21,8 +14,8 @@ type SVARTableProps = {
   onSelectedIndexChanged(index: number): void;
   rowKey: string;
   scrollToTopKey?: string | number | null;
-  columns: SVARTableColumn[];
-  tree: boolean;
+  columns: IColumnConfig[];
+  tree?: boolean;
   data: SVARTableRow[];
   selectedIndex?: number;
   isFocused?: boolean;
@@ -51,7 +44,7 @@ export const SVARTable = (props: SVARTableProps) => {
       return;
     }
     if (tableRef.current?.scrollTop) {
-      tableRef.current.scrollTop(0);
+      tableRef.current.scrollTop = 0;
     }
   }, [scrollToTopKey]);
 
@@ -59,35 +52,10 @@ export const SVARTable = (props: SVARTableProps) => {
     if (!api.current || selectedIndex === undefined) {
       return;
     }
-    (api.current as { setSelectedRow?: (id: string) => void })?.setSelectedRow?.(
-      String(selectedIndex),
-    );
+    (
+      api.current as { setSelectedRow?: (id: string) => void }
+    )?.setSelectedRow?.(String(selectedIndex));
   }, [selectedIndex]);
-
-  const resolvedColumns = columns.map((column) => {
-    if (!column.cell) {
-      return column;
-    }
-    return {
-      ...column,
-      cell: (row: SVARTableRow) => column.cell?.({ row }),
-    };
-  });
-
-  const selectedRowId = selectedIndex !== undefined ? String(selectedIndex) : null;
-  const rowClass = ({ row }: { row: SVARTableRow }) => {
-    const classNames = ["wx-row"];
-    const rowId = row?.[rowKey];
-    if (selectedRowId && rowId !== undefined && String(rowId) === selectedRowId) {
-      classNames.push(
-        isFocused ? "row--highlighted" : "row--highlighted--unfocussed",
-      );
-    }
-    if (row?.type_id && !MessageIsRead(row.type_id as MessageStatusEnum)) {
-      classNames.push("bold");
-    }
-    return classNames.join(" ");
-  };
 
   return (
     <Frame
@@ -121,9 +89,8 @@ export const SVARTable = (props: SVARTableProps) => {
         ref={api}
         data={data}
         tree={tree}
-        columns={resolvedColumns}
-        rowCss={rowClass}
-        filterValues={undefined}
+        columns={columns}
+        filterValues={{}}
       />
     </Frame>
   );

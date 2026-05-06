@@ -1,12 +1,11 @@
-import { SortType } from "rsuite";
 import { Message } from "../../data/DTO";
 import { TreeNode } from "rsuite/esm/internals/Tree/types";
 import { buildMessageTree, filterMessages } from "../../data/MessageUtils";
 import "rsuite/dist/rsuite.css";
 import { useMemo, useState } from "react";
-import { useSortedData } from "../../hooks/useSortedData";
 import { SVARTable } from "../../ui/SVARTable/SVARTable";
 import { formatDate } from "../../data/DateTimeFormat";
+import { IColumnConfig, IRow } from "@svar-ui/react-grid";
 
 export const MessageTree = ({
   hideRead,
@@ -24,8 +23,6 @@ export const MessageTree = ({
   const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number>();
-  const [sortColumn, setSortColumn] = useState<string | undefined>();
-  const [sortType, setSortType] = useState<SortType | undefined>();
 
   const data: TreeNode[] = useMemo(() => {
     if (!messages) return [];
@@ -34,12 +31,7 @@ export const MessageTree = ({
       : filterMessages(messages, { hideRead });
   }, [messages, useThreads, hideRead]);
 
-  const sortedData = useSortedData<TreeNode>(data, {
-    key: sortColumn,
-    direction: sortType,
-  });
-
-  function MessageCell({ row }: { row: Message }) {
+  const MessageCell = ({ row }: { row: IRow }) => {
     const dateStr = row?.dateToFormat ?? row?.date;
     if (!dateStr) return <div></div>;
     return (
@@ -48,30 +40,53 @@ export const MessageTree = ({
         <i className="wxi-check" />
       </div>
     );
-  }
+  };
 
-  const columns = [
-    { id: "subject", header: "Subject", flexgrow: 2, treetoggle: useThreads },
-    { id: "from", header: "From", flexgrow: 1 },
-    { id: "date", cell: MessageCell, header: "Date", flexgrow: 2 },
-  ];
+  const columns: IColumnConfig[] = useMemo(
+    () => [
+      {
+        id: "subject",
+        header: "Subject",
+        flexgrow: 2,
+        treetoggle: useThreads,
+        sort: true,
+      },
+      { id: "from", header: "From", flexgrow: 1, sort: true },
+      {
+        id: "date",
+        cell: MessageCell,
+        header: "Date",
+        flexgrow: 2,
+        sort: true,
+      },
+    ],
+    [],
+  );
+
+  function init(api: any) {
+    api.on("update-cell", () => {
+      const marks = api.getState().sortMarks;
+      for (let key in marks) {
+        api.exec("sort-rows", {
+          key,
+          order: marks[key].order,
+          add: marks[key].index ?? true,
+        });
+      }
+    });
+  }
 
   return (
     <SVARTable
+      init={init}
       columns={columns}
-      sortColumn={sortColumn}
-      sortType={sortType}
-      onSortColumn={(column, type) => {
-        setSortColumn(column);
-        setSortType(type);
-      }}
       tree={useThreads}
       virtualized
       expandedRowKeys={expandedRowKeys}
       defaultExpandAllRows={false}
       cellBordered
       rowKey="msg_id"
-      data={sortedData}
+      data={data}
       selectedIndex={selectedIndex}
       isFocused={isFocused}
       fillHeight
@@ -87,6 +102,6 @@ export const MessageTree = ({
         onSelectedMessageChanged(index);
       }}
       onFocusUpdate={(focus) => setIsFocused(focus)}
-    ></SVARTable>
+    />
   );
 };

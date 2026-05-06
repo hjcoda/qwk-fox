@@ -73,11 +73,6 @@ function App() {
     );
   });
 
-  // Set initial zoom to 90%
-  useEffect(() => {
-    document.body.style.zoom = "90%";
-  }, []);
-
   useEffect(() => {
     getServers();
   }, [lastImportTime]);

@@ -15,3 +15,17 @@
 .wx-row {
   cursor: default;
 }
+
+.wxi-arrow-up {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(25% 75%, 75% 75%, 50% 25%);
+}
+
+.wxi-arrow-down {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(25% 25%, 75% 25%, 50% 75%);
+}
