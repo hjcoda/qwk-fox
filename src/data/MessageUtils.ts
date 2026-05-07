@@ -1,4 +1,3 @@
-import { TreeNode } from "rsuite/esm/internals/Tree/types";
 import { Message, MessageStatusEnum } from "./DTO";
 import { formatDate } from "./DateTimeFormat";
 
@@ -34,9 +33,13 @@ export const getReadMessageStatus = (messageStatus: MessageStatusEnum) => {
   return readStatusLookup[messageStatus] ?? messageStatus;
 };
 
-export const buildMessageTree = (messages: Message[]): TreeNode[] => {
+export type TreeMessage = Message & {
+  data?: Message[];
+};
+
+export const buildMessageTree = (messages: Message[]): TreeMessage[] => {
   // Create a map to store nodes by their ID for quick lookup
-  const nodeMap = new Map<string | number, TreeNode>();
+  const nodeMap = new Map<string | number, TreeMessage>();
 
   // First pass: Create TreeNode objects with empty children arrays
   messages.forEach((message) => {
@@ -45,7 +48,7 @@ export const buildMessageTree = (messages: Message[]): TreeNode[] => {
     });
   });
 
-  const roots: TreeNode[] = [];
+  const roots: TreeMessage[] = [];
 
   // Second pass: Build the tree structure
   messages.forEach((message) => {

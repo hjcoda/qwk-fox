@@ -1,7 +1,9 @@
 import { Message } from "../../data/DTO";
-import { TreeNode } from "rsuite/esm/internals/Tree/types";
-import { buildMessageTree, filterMessages } from "../../data/MessageUtils";
-import "rsuite/dist/rsuite.css";
+import {
+  buildMessageTree,
+  filterMessages,
+  TreeMessage,
+} from "../../data/MessageUtils";
 import { useMemo, useState } from "react";
 import { SVARTable } from "../../ui/SVARTable/SVARTable";
 import { formatDate } from "../../data/DateTimeFormat";
@@ -24,7 +26,7 @@ export const MessageTree = ({
   const [isFocused, setIsFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number>();
 
-  const data: TreeNode[] = useMemo(() => {
+  const data: TreeMessage[] = useMemo(() => {
     if (!messages) return [];
     return useThreads
       ? buildMessageTree(messages)

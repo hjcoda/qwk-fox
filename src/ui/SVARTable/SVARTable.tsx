@@ -1,13 +1,8 @@
-import { Grid, IApi, IColumnConfig } from "@svar-ui/react-grid";
+import { Grid, IApi, IColumnConfig, IRow } from "@svar-ui/react-grid";
 import "@svar-ui/react-grid/all.css";
 import "./SVARTable.css";
 import { useEffect, useRef } from "react";
 import { Frame } from "react95";
-
-type SVARTableRow = Record<string, unknown> & {
-  id?: string | number;
-  [key: string]: unknown;
-};
 
 type SVARTableProps = {
   onFocusUpdate(isFocused: boolean): void;
@@ -16,7 +11,7 @@ type SVARTableProps = {
   scrollToTopKey?: string | number | null;
   columns: IColumnConfig[];
   tree?: boolean;
-  data: SVARTableRow[];
+  data: IRow[];
   selectedIndex?: number;
   isFocused?: boolean;
 } & Record<string, unknown>;
